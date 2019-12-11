@@ -82,4 +82,18 @@ public class AdamCommandFactory implements CommandFactory {
         e.setStackTrace(t.getStackTrace());
         return e;
     }
+
+    @Override
+    public RequestCommand createHeartBeatRequest() {
+        return new RequestCommand(AdamCommandCode.HEARTBEAT_REQUEST);
+    }
+
+    @Override
+    public boolean checkResponse(Command command) {
+        ResponseCommand response = (ResponseCommand) command;
+        if (response == null || !response.getResponseStatus().equals(ResponseStatus.SUCCESS)) {
+            return false;
+        }
+        return true;
+    }
 }

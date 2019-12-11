@@ -28,7 +28,6 @@ public class AdamClient extends OaaClient {
         this.protocol = new AdamProtocol();
         ConnectionFactory connectionFactory = new DefaultConnectionFactory(connectionEventHandler, configManager, protocol);
         connectionManager = new DefaultConnectionManager(connectionFactory, configManager);
-        connectionEventHandler.setConnectionManager(connectionManager);
     }
 
     @Override

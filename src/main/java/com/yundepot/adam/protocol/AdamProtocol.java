@@ -3,10 +3,7 @@ package com.yundepot.adam.protocol;
 import com.yundepot.adam.protocol.codec.AdamProtocolDecoder;
 import com.yundepot.adam.protocol.codec.AdamProtocolEncoder;
 import com.yundepot.adam.protocol.command.AdamCommandFactory;
-import com.yundepot.oaa.protocol.HeartbeatTrigger;
-import com.yundepot.oaa.protocol.Protocol;
-import com.yundepot.oaa.protocol.ProtocolCode;
-import com.yundepot.oaa.protocol.ProtocolHandler;
+import com.yundepot.oaa.protocol.*;
 import com.yundepot.oaa.protocol.codec.ProtocolDecoder;
 import com.yundepot.oaa.protocol.codec.ProtocolEncoder;
 import com.yundepot.oaa.protocol.command.CommandFactory;
@@ -61,7 +58,7 @@ public class AdamProtocol implements Protocol {
         this.encoder = new AdamProtocolEncoder();
         this.decoder = new AdamProtocolDecoder();
         this.commandFactory = new AdamCommandFactory();
-        this.heartbeatTrigger = new AdamHeartbeatTrigger(this.commandFactory, this);
+        this.heartbeatTrigger = new ProtocolHeartbeatTrigger(this.commandFactory, this);
         this.protocolHandler = new AdamProtocolHandler(this.commandFactory);
     }
 
