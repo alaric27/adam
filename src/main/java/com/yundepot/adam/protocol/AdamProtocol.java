@@ -11,28 +11,25 @@ import com.yundepot.oaa.protocol.command.CommandFactory;
 /**
  *
  * 请求协议
- *   0     1     2           4                      8     9      10          12         14           16          18                     22                                   n                     n+4
- *   +-----+-----+-----+----------+-----+-----+-----+-----+------+-----+-----+-----+-----+-----------+-----------+-----+-----+-----+-----+-----------+-----------+-----+-----+-----+-----+-----+-----+
- *   |proto| ver | cmdcode   |    requestId         |codec|switch|   timeout             |  classLen | headerLen |   contentLen          | className header content  bytes   | CRC32(optional)       |
- *   +-----------------+----------------+-----------+------------+-----------+-----------+-----------+-----------+-----+-----+-----+-----+-----------+-----------+-----+-----+-----+-----+-----+-----+
+ *   0     1     2           4                      8     9      10          12         14                       n                      n+4
+ *   +-----+-----+-----+----------+-----+-----+-----+-----+------+-----+-----+-----+-----+-----------+-----------+-----+-----+-----+-----+
+ *   |proto| ver | command   |    requestId         | headerLen  |         bodyLen       |   header body bytes   | CRC32(optional)       |
+ *   +-----------------+----------------+-----------+------------+-----------+-----------+-----------+-----------+-----+-----+-----+-----+
  *
  *
  * 响应协议
  *
- *   0     1     2           4           6           8     9      10          12         14           16                      20                                   n                     n+4
- *   +-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----------+-----------+-----+-----+-----+-----+-----+-----+
- *   |proto| ver | cmdcode   |     requestId         |codec|switch|respstatus |  classLen | headerLen |   contentLen          | className header content  bytes   | CRC32(optional)       |
- *   +-----------------+-----------------+-----------+------------+-----------+-----------+-----+-----+-----+-----+-----+-----+-----------+-----------+-----+-----+-----+-----+-----+-----+
+ *   0     1     2           4           6           8     9      10          12         14                       n                      n+4
+ *   +-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----------+
+ *   |proto| ver | command   |     requestId         | headerLen  |        bodyLen        |  header body  bytes   | CRC32(optional)       |
+ *   +-----------------+-----------------+-----------+------------+-----------+-----------+-----+-----+-----+-----+-----+-----+-----------+
  *
  *  proto: 协议编码
  *  ver: 协议版本
- *  cmdcode: Command的编码
+ *  command: Command的编码
  *  requestId:请求id
- *  codec: 编码解码器的代号
- *  switch: crc的开关
- *  classLen: class类的长度
  *  headerLen:header的长度
- *  contentLen:内容的长度
+ *  bodyLen:内容的长度
  *  CRC32:校验和
  *
  * @author zhaiyanan
@@ -44,8 +41,8 @@ public class AdamProtocol implements Protocol {
     public static final byte PROTOCOL_VERSION = (byte) 1;
 
 
-    private static final int REQUEST_HEADER_LEN = 22;
-    private static final int RESPONSE_HEADER_LEN = 20;
+    private static final int REQUEST_HEADER_LEN = 14;
+    private static final int RESPONSE_HEADER_LEN = 14;
 
     private ProtocolEncoder encoder;
     private ProtocolDecoder decoder;

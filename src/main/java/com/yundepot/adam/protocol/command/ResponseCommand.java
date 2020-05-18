@@ -33,13 +33,13 @@ public class ResponseCommand extends AdamCommand {
     public ResponseCommand(int id, Object content) {
         this();
         this.setId(id);
-        this.setContent(content);
+        this.setBody(content);
     }
 
     public ResponseCommand(CommandCode code, int id, Object response) {
         super(code);
         this.setId(id);
-        this.setContent(response);
+        this.setBody(response);
     }
 
 

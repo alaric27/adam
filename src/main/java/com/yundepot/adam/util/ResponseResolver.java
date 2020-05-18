@@ -16,7 +16,7 @@ public class ResponseResolver {
 
     public static Object resolveResponseObject(ResponseCommand response, String addr) throws Exception {
         preProcess(response, addr);
-        return response.getContent();
+        return response.getBody();
     }
 
     private static void preProcess(ResponseCommand response, String addr) throws Exception {
@@ -55,7 +55,7 @@ public class ResponseResolver {
     }
 
     private static Throwable toThrowable(ResponseCommand response) {
-        Object ex = response.getContent();
+        Object ex = response.getBody();
         if (ex != null && ex instanceof Throwable) {
             return (Throwable) ex;
         }

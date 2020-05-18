@@ -1,5 +1,7 @@
 package com.yundepot.adam.protocol.codec;
 
+import com.yundepot.adam.config.HeaderOption;
+import com.yundepot.adam.protocol.command.AdamCommand;
 import com.yundepot.adam.protocol.command.AdamCommandCode;
 import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.adam.protocol.AdamProtocol;
@@ -7,7 +9,10 @@ import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
 import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.CodecException;
+import com.yundepot.oaa.protocol.ProtocolCode;
 import com.yundepot.oaa.protocol.codec.ProtocolDecoder;
+import com.yundepot.oaa.serialize.SerializerManager;
+import com.yundepot.oaa.serialize.StringMapSerializer;
 import com.yundepot.oaa.util.CrcUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhaiyanan
@@ -37,13 +43,67 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         // 检查协议
         checkProtocol(in);
         // 检查 command code
-        short cmdCode = checkCommandCode(in);
+        checkCommandCode(in);
+
+        int startIndex = in.readerIndex();
+        in.markReaderIndex();
+        byte protocolCode = in.readByte();
+        byte version = in.readByte();
+        short cmdCode = in.readShort();
+        int requestId = in.readInt();
+
+        short headerLen = in.readShort();
+        int bodyLen = in.readInt();
+        byte[] headerBytes = null;
+        byte[] bodyBytes = null;
+
+        // 校验数据是否足够
+        int lengthAtLeast = headerLen + bodyLen;
+        if (in.readableBytes() < lengthAtLeast) {
+            in.resetReaderIndex();
+            return;
+        }
+
+        if (headerLen > 0) {
+            headerBytes = new byte[headerLen];
+            in.readBytes(headerBytes);
+        }
+        if (bodyLen > 0) {
+            bodyBytes = new byte[bodyLen];
+            in.readBytes(bodyBytes);
+        }
+
+        Map<String, String> header = StringMapSerializer.deserialize(headerBytes);
+        byte crcSwitch = Byte.valueOf(header.getOrDefault(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
+        if (CrcSwitch.ON.getCode() == crcSwitch) {
+            if (in.readableBytes() < 4) {
+                in.resetReaderIndex();
+                return;
+            }
+            checkCRC(in, startIndex);
+        }
+
+        AdamCommand command = null;
         if (cmdCode == AdamCommandCode.REQUEST.value() || cmdCode == AdamCommandCode.ONE_WAY.value()
                 || cmdCode == AdamCommandCode.HEARTBEAT_REQUEST.value()) {
-            decodeRequest(in, out);
+            command = new RequestCommand();
         } else if (cmdCode == AdamCommandCode.RESPONSE.value() || cmdCode == AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
-            decodeResponse(in, ctx, out);
+            command = new ResponseCommand();
+            ResponseCommand cmd = (ResponseCommand) command;
+            cmd.setResponseHost((InetSocketAddress) ctx.channel().remoteAddress());
         }
+
+        command.setProtocolCode(ProtocolCode.getProtocolCode(protocolCode, version));
+        command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
+        command.setId(requestId);
+        command.setHeaderLen(headerLen);
+        command.setHeader(header);
+        command.setBodyLen(bodyLen);
+
+        byte serializeCode = Byte.valueOf(header.getOrDefault(HeaderOption.SERIALIZATION.getKey(), HeaderOption.SERIALIZATION.getDefaultValue()));
+        String interest = header.getOrDefault(HeaderOption.INTEREST.getKey(), HeaderOption.INTEREST.getDefaultValue());
+        command.setBody(SerializerManager.getSerializer(serializeCode).deserialize(bodyBytes, interest));
+        out.add(command);
     }
 
     /**
@@ -81,144 +141,6 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         }
     }
 
-    /**
-     * 解码响应
-     * @param in
-     * @param out
-     */
-    private void decodeResponse(ByteBuf in, ChannelHandlerContext ctx, List<Object> out) throws Exception {
-        int startIndex = in.readerIndex();
-        in.markReaderIndex();
-        if (in.readableBytes() < AdamProtocol.getResponseHeaderLength()) {
-            in.resetReaderIndex();
-            return;
-        }
-
-        in.readByte();
-        in.readByte();
-        short cmdCode = in.readShort();
-        int requestId = in.readInt();
-        byte serializer = in.readByte();
-        byte crcSwitchValue = in.readByte();
-        short status = in.readShort();
-        short classLen = in.readShort();
-        short headerLen = in.readShort();
-        int contentLen = in.readInt();
-        byte[] clazz = null;
-        byte[] header = null;
-        byte[] content = null;
-
-        boolean crcSwitchOn = CrcSwitch.ON.getCode() == crcSwitchValue;
-        int lengthAtLeast = classLen + headerLen + contentLen;
-        if (crcSwitchOn) {
-            lengthAtLeast += 4;
-        }
-
-        // 校验数据是否足够
-        if (in.readableBytes() < lengthAtLeast) {
-            in.resetReaderIndex();
-            return;
-        }
-
-        if (classLen > 0) {
-            clazz = new byte[classLen];
-            in.readBytes(clazz);
-        }
-        if (headerLen > 0) {
-            header = new byte[headerLen];
-            in.readBytes(header);
-        }
-        if (contentLen > 0) {
-            content = new byte[contentLen];
-            in.readBytes(content);
-        }
-        if (crcSwitchOn) {
-            checkCRC(in, startIndex);
-        }
-
-        ResponseCommand command = createResponseCommand(cmdCode);
-        command.setId(requestId);
-        command.setSerializer(serializer);
-        command.setCrcSwitch(CrcSwitch.valueOf(crcSwitchValue));
-        command.setResponseStatus(ResponseStatus.valueOf(status));
-        command.setClazzBytes(clazz);
-        command.setHeaderBytes(header);
-        command.setContentBytes(content);
-        command.setResponseTimeMillis(System.currentTimeMillis());
-        command.setResponseHost((InetSocketAddress) ctx.channel().remoteAddress());
-        command.deserialize();
-        out.add(command);
-    }
-
-    /**
-     * 解码请求
-     * @param in
-     * @param out
-     */
-    private void decodeRequest(ByteBuf in, List<Object> out) throws Exception {
-        int startIndex = in.readerIndex();
-        in.markReaderIndex();
-
-        if (in.readableBytes() < AdamProtocol.getRequestHeaderLength()) {
-            in.resetReaderIndex();
-            return;
-        }
-
-        in.readByte();
-        in.readByte();
-        short cmdCode = in.readShort();
-
-        int requestId = in.readInt();
-        byte serializer = in.readByte();
-        byte crcSwitchValue = in.readByte();
-        int timeout = in.readInt();
-        short classLen = in.readShort();
-        short headerLen = in.readShort();
-        int contentLen = in.readInt();
-        byte[] clazz = null;
-        byte[] header = null;
-        byte[] content = null;
-
-        boolean crcSwitchOn = CrcSwitch.ON.getCode() == crcSwitchValue;
-        int lengthAtLeast = classLen + headerLen + contentLen;
-        if (crcSwitchOn) {
-            lengthAtLeast += 4;
-        }
-
-        // 校验数据是否足够
-        if (in.readableBytes() < lengthAtLeast) {
-            in.resetReaderIndex();
-            return;
-        }
-
-        if (classLen > 0) {
-            clazz = new byte[classLen];
-            in.readBytes(clazz);
-        }
-        if (headerLen > 0) {
-            header = new byte[headerLen];
-            in.readBytes(header);
-        }
-        if (contentLen > 0) {
-            content = new byte[contentLen];
-            in.readBytes(content);
-        }
-        if (crcSwitchOn) {
-            checkCRC(in, startIndex);
-        }
-
-        RequestCommand command = createRequestCommand(cmdCode);
-        command.setId(requestId);
-        command.setSerializer(serializer);
-        command.setCrcSwitch(CrcSwitch.valueOf(crcSwitchValue));
-        command.setTimeout(timeout);
-        command.setClazzBytes(clazz);
-        command.setHeaderBytes(header);
-        command.setContentBytes(content);
-        command.deserialize();
-        out.add(command);
-    }
-
     private void checkCRC(ByteBuf in, int startIndex) throws CodecException{
         int endIndex = in.readerIndex();
         int expectedCrc = in.readInt();
@@ -230,18 +152,5 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             logger.error(err);
             throw new CodecException(err);
         }
-    }
-
-    private ResponseCommand createResponseCommand(short cmdCode) {
-        ResponseCommand command = new ResponseCommand();
-        command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
-        return command;
-    }
-
-    private RequestCommand createRequestCommand(short cmdCode) {
-        RequestCommand command = new RequestCommand();
-        command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
-        command.setArriveTime(System.currentTimeMillis());
-        return command;
     }
 }

@@ -39,7 +39,7 @@ public class AdamProtocolHandler extends AbstractProtocolHandler {
         if (msg instanceof RequestCommand) {
             final RequestCommand cmd = (RequestCommand) msg;
             if (cmd.getCommandCode().value() != AdamCommandCode.ONE_WAY.value()) {
-                final ResponseCommand response = this.commandFactory.createExceptionResponse(cmd.getId(), t, null);
+                final ResponseCommand response = this.commandFactory.createExceptionResponse(cmd, t, null);
                 ctx.getChannelHandlerContext().writeAndFlush(response).addListener(future -> {
                     if (!future.isSuccess()) {
                         final int id = cmd.getId();

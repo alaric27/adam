@@ -1,11 +1,14 @@
 package com.yundepot.adam.protocol.command;
 
+import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.ServerException;
 import com.yundepot.oaa.protocol.command.Command;
 import com.yundepot.oaa.protocol.command.CommandFactory;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author zhaiyanan
@@ -21,26 +24,32 @@ public class AdamCommandFactory implements CommandFactory {
     public ResponseCommand createResponse(final Command request, final Object responseObject) {
         RequestCommand requestCmd = (RequestCommand) request;
         ResponseCommand response = new ResponseCommand(requestCmd.getId(), responseObject);
-        if (null != responseObject) {
-            response.setClassName(responseObject.getClass().getName());
-        }
-        response.setSerializer(requestCmd.getSerializer());
-        response.setCrcSwitch(requestCmd.getCrcSwitch());
-        response.setResponseStatus(ResponseStatus.SUCCESS);
+        Map<String, String> header = new HashMap<>();
+        response.setProtocolCode(request.getProtocolCode());
+        header.put(HeaderOption.SERIALIZATION.getKey(), requestCmd.getHeader(HeaderOption.SERIALIZATION.getKey(), HeaderOption.SERIALIZATION.getDefaultValue()));
+        header.put(HeaderOption.CRC_SWITCH.getKey(), requestCmd.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
+        header.put(HeaderOption.RESPONSE_STATUS.getKey(), HeaderOption.RESPONSE_STATUS.getDefaultValue());
+        response.setHeader(header);
         return response;
     }
 
 
     @Override
-    public ResponseCommand createExceptionResponse(int id, final Throwable t, String errMsg) {
+    public ResponseCommand createExceptionResponse(final Command request, final Throwable t, String errMsg) {
         ResponseCommand response = null;
         if (null == t) {
-            response = new ResponseCommand(id, createServerException(errMsg));
+            response = new ResponseCommand(request.getId(), createServerException(errMsg));
         } else {
-            response = new ResponseCommand(id, createServerException(t, errMsg));
+            response = new ResponseCommand(request.getId(), createServerException(t, errMsg));
         }
-        response.setClassName(ServerException.class.getName());
-        response.setResponseStatus(ResponseStatus.SERVER_EXCEPTION);
+
+        RequestCommand requestCmd = (RequestCommand) request;
+        response.setProtocolCode(request.getProtocolCode());
+        Map<String, String> header = new HashMap<>();
+        header.put(HeaderOption.SERIALIZATION.getKey(), requestCmd.getHeader(HeaderOption.SERIALIZATION.getKey(), HeaderOption.SERIALIZATION.getDefaultValue()));
+        header.put(HeaderOption.CRC_SWITCH.getKey(), requestCmd.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
+        header.put(HeaderOption.RESPONSE_STATUS.getKey(), String.valueOf(ResponseStatus.SERVER_EXCEPTION.getValue()));
+        response.setHeader(header);
         return response;
     }
 
