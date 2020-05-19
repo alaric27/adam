@@ -91,6 +91,8 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             command = new ResponseCommand();
             ResponseCommand cmd = (ResponseCommand) command;
             cmd.setResponseHost((InetSocketAddress) ctx.channel().remoteAddress());
+            short status = Short.valueOf(header.getOrDefault(HeaderOption.RESPONSE_STATUS.getKey(), HeaderOption.RESPONSE_STATUS.getDefaultValue()));
+            cmd.setResponseStatus(ResponseStatus.valueOf(status));
         }
 
         command.setProtocolCode(ProtocolCode.getProtocolCode(protocolCode, version));
