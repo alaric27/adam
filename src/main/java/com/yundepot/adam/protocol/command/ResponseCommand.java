@@ -23,6 +23,7 @@ public class ResponseCommand extends AdamCommand {
 
     public ResponseCommand(CommandCode code) {
         super(code);
+        this.responseStatus = ResponseStatus.SUCCESS;
     }
 
     public ResponseCommand(CommandCode code, int id) {
@@ -30,10 +31,10 @@ public class ResponseCommand extends AdamCommand {
         this.setId(id);
     }
 
-    public ResponseCommand(int id, Object content) {
+    public ResponseCommand(int id, Object body) {
         this();
         this.setId(id);
-        this.setBody(content);
+        this.setBody(body);
     }
 
     public ResponseCommand(CommandCode code, int id, Object response) {

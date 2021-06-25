@@ -18,9 +18,9 @@ public class OneWayCommandProcessor extends AbstractCommandProcessor<RequestComm
 
     @Override
     public void doProcess(InvokeContext ctx, RequestCommand cmd) {
-        Processor processor = ProcessorManager.getProcessor(cmd.getInterest());
+        Processor processor = ProcessorManager.getProcessor(cmd.getNri());
         if (processor == null) {
-            logger.error("No processor found for request: " + cmd.getInterest());
+            logger.error("No processor found for request: " + cmd.getNri());
             return;
         }
 
@@ -38,7 +38,7 @@ public class OneWayCommandProcessor extends AbstractCommandProcessor<RequestComm
     private void dispatchToUserProcessor(InvokeContext ctx, RequestCommand cmd) {
         final int id = cmd.getId();
         try {
-            Processor processor = ProcessorManager.getProcessor(cmd.getInterest());
+            Processor processor = ProcessorManager.getProcessor(cmd.getNri());
             processor.handleRequest(ctx, cmd.getBody());
         } catch (Throwable t) {
             String errMsg = "one way process request failed in RequestCommandProcessor, id=" + id;

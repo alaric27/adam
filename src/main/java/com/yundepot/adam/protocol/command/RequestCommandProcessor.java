@@ -29,9 +29,9 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
 
     @Override
     public void doProcess(final InvokeContext ctx, RequestCommand cmd) {
-        Processor processor = ProcessorManager.getProcessor(cmd.getInterest());
+        Processor processor = ProcessorManager.getProcessor(cmd.getNri());
         if (processor == null) {
-            String errMsg = "No processor found for request: " + cmd.getInterest();
+            String errMsg = "No processor found for request: " + cmd.getNri();
             logger.error(errMsg);
             sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, null, errMsg));
             return;
@@ -39,7 +39,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
 
         ctx.setTimeoutDiscard(processor.timeoutDiscard());
         ctx.setArriveTimestamp(cmd.getArriveTime());
-        ctx.setTimeout(Integer.valueOf(cmd.getHeader(HeaderOption.REQUEST_TIMEOUT.getKey(), HeaderOption.REQUEST_TIMEOUT.getDefaultValue())));
+        ctx.setTimeout(cmd.getTimeout());
         if (ctx.isTimeoutDiscard() && ctx.isRequestTimeout()) {
             logger.debug("request id [{}] time out discard, cost [{}]", cmd.getId(), System.currentTimeMillis() - cmd.getArriveTime());
             return;
@@ -89,7 +89,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
     private void dispatchToUserProcessor(InvokeContext ctx, RequestCommand cmd) {
         final int id = cmd.getId();
         ctx.setAttachment(cmd.getHeader());
-        Processor processor = ProcessorManager.getProcessor(cmd.getInterest());
+        Processor processor = ProcessorManager.getProcessor(cmd.getNri());
         if (processor instanceof AsyncProcessor) {
             // 在业务线程中处理，在业务线程中发送响应结果
             try {

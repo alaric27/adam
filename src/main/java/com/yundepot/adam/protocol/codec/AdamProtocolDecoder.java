@@ -51,17 +51,40 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         byte version = in.readByte();
         short cmdCode = in.readShort();
         int requestId = in.readInt();
+        byte serializer = in.readByte();
 
+        AdamCommand command = null;
+        if (cmdCode == AdamCommandCode.REQUEST.value() || cmdCode == AdamCommandCode.ONE_WAY.value()
+                || cmdCode == AdamCommandCode.HEARTBEAT_REQUEST.value()) {
+            int timeout = in.readInt();
+            command = new RequestCommand();
+            RequestCommand cmd = (RequestCommand) command;
+            cmd.setTimeout(timeout);
+        } else if (cmdCode == AdamCommandCode.RESPONSE.value() || cmdCode == AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
+            short status = in.readShort();
+            command = new ResponseCommand();
+            ResponseCommand cmd = (ResponseCommand) command;
+            cmd.setResponseHost((InetSocketAddress) ctx.channel().remoteAddress());
+            cmd.setResponseStatus(ResponseStatus.valueOf(status));
+        }
+
+        short nriLen = in.readShort();
         short headerLen = in.readShort();
         int bodyLen = in.readInt();
+        byte[] nriBytes = null;
         byte[] headerBytes = null;
         byte[] bodyBytes = null;
 
         // 校验数据是否足够
-        int lengthAtLeast = headerLen + bodyLen;
+        int lengthAtLeast = nriLen + headerLen + bodyLen;
         if (in.readableBytes() < lengthAtLeast) {
             in.resetReaderIndex();
             return;
+        }
+
+        if (nriLen > 0) {
+            nriBytes = new byte[nriLen];
+            in.readBytes(nriBytes);
         }
 
         if (headerLen > 0) {
@@ -73,8 +96,16 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             in.readBytes(bodyBytes);
         }
 
-        Map<String, String> header = StringMapSerializer.deserialize(headerBytes);
-        byte crcSwitch = Byte.valueOf(header.getOrDefault(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
+        command.setProtocolCode(ProtocolCode.getProtocolCode(protocolCode, version));
+        command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
+        command.setId(requestId);
+        command.setSerializer(serializer);
+        command.setNriBytes(nriBytes);
+        command.setHeaderBytes(headerBytes);
+        command.setBodyBytes(bodyBytes);
+        command.deserialize();
+
+        byte crcSwitch = Byte.valueOf(command.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
         if (CrcSwitch.ON.getCode() == crcSwitch) {
             if (in.readableBytes() < 4) {
                 in.resetReaderIndex();
@@ -82,29 +113,6 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             }
             checkCRC(in, startIndex);
         }
-
-        AdamCommand command = null;
-        if (cmdCode == AdamCommandCode.REQUEST.value() || cmdCode == AdamCommandCode.ONE_WAY.value()
-                || cmdCode == AdamCommandCode.HEARTBEAT_REQUEST.value()) {
-            command = new RequestCommand();
-        } else if (cmdCode == AdamCommandCode.RESPONSE.value() || cmdCode == AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
-            command = new ResponseCommand();
-            ResponseCommand cmd = (ResponseCommand) command;
-            cmd.setResponseHost((InetSocketAddress) ctx.channel().remoteAddress());
-            short status = Short.valueOf(header.getOrDefault(HeaderOption.RESPONSE_STATUS.getKey(), HeaderOption.RESPONSE_STATUS.getDefaultValue()));
-            cmd.setResponseStatus(ResponseStatus.valueOf(status));
-        }
-
-        command.setProtocolCode(ProtocolCode.getProtocolCode(protocolCode, version));
-        command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
-        command.setId(requestId);
-        command.setHeaderLen(headerLen);
-        command.setHeader(header);
-        command.setBodyLen(bodyLen);
-
-        byte serializeCode = Byte.valueOf(header.getOrDefault(HeaderOption.SERIALIZATION.getKey(), HeaderOption.SERIALIZATION.getDefaultValue()));
-        String interest = header.getOrDefault(HeaderOption.INTEREST.getKey(), HeaderOption.INTEREST.getDefaultValue());
-        command.setBody(SerializerManager.getSerializer(serializeCode).deserialize(bodyBytes, interest));
         out.add(command);
     }
 

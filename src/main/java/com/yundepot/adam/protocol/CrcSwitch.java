@@ -5,8 +5,8 @@ package com.yundepot.adam.protocol;
  * @date 2019/7/1 14:27
  */
 public enum CrcSwitch {
-    ON((byte) 0),
-    OFF((byte) 1),
+    OFF((byte) 0),
+    ON((byte) 1),
     ;
 
     private byte code;
@@ -26,9 +26,9 @@ public enum CrcSwitch {
     public static CrcSwitch valueOf(byte value) {
         switch (value) {
             case 0:
-                return ON;
-            case 1:
                 return OFF;
+            case 1:
+                return ON;
                 default:
                     throw new IllegalArgumentException("Unknown status value ," + value);
         }

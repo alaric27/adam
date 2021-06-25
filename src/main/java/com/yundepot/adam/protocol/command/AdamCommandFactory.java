@@ -1,6 +1,7 @@
 package com.yundepot.adam.protocol.command;
 
 import com.yundepot.adam.config.HeaderOption;
+import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.ServerException;
 import com.yundepot.oaa.protocol.command.Command;
@@ -24,15 +25,17 @@ public class AdamCommandFactory implements CommandFactory {
     public ResponseCommand createResponse(final Command request, final Object responseObject) {
         RequestCommand requestCmd = (RequestCommand) request;
         ResponseCommand response = new ResponseCommand(requestCmd.getId(), responseObject);
-        Map<String, String> header = new HashMap<>();
         response.setProtocolCode(request.getProtocolCode());
-        header.put(HeaderOption.SERIALIZATION.getKey(), requestCmd.getHeader(HeaderOption.SERIALIZATION.getKey(), HeaderOption.SERIALIZATION.getDefaultValue()));
-        header.put(HeaderOption.CRC_SWITCH.getKey(), requestCmd.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
-        header.put(HeaderOption.RESPONSE_STATUS.getKey(), HeaderOption.RESPONSE_STATUS.getDefaultValue());
-        response.setHeader(header);
+        response.setResponseStatus(ResponseStatus.SUCCESS);
+        response.setSerializer(requestCmd.getSerializer());
+        response.setNri(responseObject.getClass().getName());
+
+        byte crcSwitch = Byte.valueOf(requestCmd.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
+        if (CrcSwitch.ON.getCode() == crcSwitch) {
+            response.setHeader(HeaderOption.CRC_SWITCH.getKey(), String.valueOf(CrcSwitch.ON.getCode()));
+        }
         return response;
     }
-
 
     @Override
     public ResponseCommand createExceptionResponse(final Command request, final Throwable t, String errMsg) {
@@ -45,11 +48,8 @@ public class AdamCommandFactory implements CommandFactory {
 
         RequestCommand requestCmd = (RequestCommand) request;
         response.setProtocolCode(request.getProtocolCode());
-        Map<String, String> header = new HashMap<>();
-        header.put(HeaderOption.SERIALIZATION.getKey(), requestCmd.getHeader(HeaderOption.SERIALIZATION.getKey(), HeaderOption.SERIALIZATION.getDefaultValue()));
-        header.put(HeaderOption.CRC_SWITCH.getKey(), requestCmd.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
-        header.put(HeaderOption.RESPONSE_STATUS.getKey(), String.valueOf(ResponseStatus.SERVER_EXCEPTION.getValue()));
-        response.setHeader(header);
+        response.setResponseStatus(ResponseStatus.SERVER_EXCEPTION);
+        response.setSerializer(requestCmd.getSerializer());
         return response;
     }
 

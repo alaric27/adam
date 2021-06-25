@@ -3,9 +3,9 @@ package com.yundepot.adam.protocol.codec;
 import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.adam.protocol.command.AdamCommand;
+import com.yundepot.adam.protocol.command.RequestCommand;
+import com.yundepot.adam.protocol.command.ResponseCommand;
 import com.yundepot.oaa.protocol.codec.ProtocolEncoder;
-import com.yundepot.oaa.serialize.SerializerManager;
-import com.yundepot.oaa.serialize.StringMapSerializer;
 import com.yundepot.oaa.util.CrcUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,36 +32,38 @@ public class AdamProtocolEncoder implements ProtocolEncoder {
         }
 
         AdamCommand command = (AdamCommand) msg;
-
-        // header
-        byte[] headerBytes = StringMapSerializer.serialize(command.getHeader());
-        int headerLen = 0;
-        if (headerBytes != null) {
-            headerLen = headerBytes.length;
-        }
-
-        // body
-        byte serializeCode = Byte.valueOf(command.getHeader(HeaderOption.SERIALIZATION.getKey(), HeaderOption.SERIALIZATION.getDefaultValue()));
-        byte[] bodyBytes = SerializerManager.getSerializer(serializeCode).serialize(command.getBody());
-        int bodyLen = 0;
-        if (bodyBytes != null) {
-            bodyLen = bodyBytes.length;
-        }
+        command.serialize();
 
         int index = out.writerIndex();
         out.writeByte(command.getProtocolCode().getCode());
         out.writeByte(command.getProtocolCode().getVersion());
         out.writeShort(command.getCommandCode().value());
         out.writeInt(command.getId());
-        out.writeShort(headerLen);
-        out.writeInt(bodyLen);
-
-        if (headerLen > 0) {
-            out.writeBytes(headerBytes);
+        out.writeByte(command.getSerializer());
+        if (command instanceof RequestCommand) {
+            RequestCommand requestCommand = (RequestCommand) command;
+            out.writeInt(requestCommand.getTimeout());
         }
 
-        if (bodyLen > 0) {
-            out.writeBytes(bodyBytes);
+        if (command instanceof ResponseCommand) {
+            ResponseCommand responseCommand = (ResponseCommand) command;
+            out.writeShort(responseCommand.getResponseStatus().getValue());
+        }
+        out.writeShort(command.getNriLen());
+        out.writeShort(command.getHeaderLen());
+        out.writeInt(command.getBodyLen());
+
+
+        if (command.getNriLen() > 0) {
+            out.writeBytes(command.getNriBytes());
+        }
+
+        if (command.getHeaderLen() > 0) {
+            out.writeBytes(command.getHeaderBytes());
+        }
+
+        if (command.getBodyLen() > 0) {
+            out.writeBytes(command.getBodyBytes());
         }
 
         byte crcSwitch = Byte.valueOf(command.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
@@ -70,6 +72,5 @@ public class AdamProtocolEncoder implements ProtocolEncoder {
             out.getBytes(index, frame);
             out.writeInt(CrcUtil.crc32(frame));
         }
-
     }
 }

@@ -1,6 +1,5 @@
 package com.yundepot.adam;
 
-import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.protocol.command.AdamCommandCode;
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.oaa.BaseRemoting;
@@ -12,7 +11,6 @@ import com.yundepot.oaa.invoke.InvokeFuture;
 import com.yundepot.oaa.protocol.Protocol;
 import com.yundepot.oaa.protocol.command.Command;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -88,14 +86,9 @@ public abstract class AdamRemoting extends BaseRemoting {
     protected RequestCommand toRemotingCommand(Object request, Map<String, String> header, int timeoutMillis) {
         RequestCommand command = this.getCommandFactory().createRequest(request);
         command.setProtocolCode(protocol.getProtocolCode());
-        if (header == null) {
-            header = new HashMap<>();
-        }
+        command.setTimeout(timeoutMillis);
         command.setHeader(header);
-        command.setHeader(HeaderOption.REQUEST_TIMEOUT.getKey(), String.valueOf(timeoutMillis));
-        command.setHeader(HeaderOption.REQUEST_TIMEOUT.getKey(), header.getOrDefault(HeaderOption.REQUEST_TIMEOUT.getKey(), HeaderOption.REQUEST_TIMEOUT.getDefaultValue()));
-        command.setHeader(HeaderOption.INTEREST.getKey(), header.getOrDefault(HeaderOption.INTEREST.getKey(), request.getClass().getName()));
-        command.setHeader(HeaderOption.CRC_SWITCH.getKey(), header.getOrDefault(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
+        command.setNri(request.getClass().getName());
         return command;
     }
 
