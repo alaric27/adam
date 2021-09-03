@@ -11,8 +11,6 @@ import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.CodecException;
 import com.yundepot.oaa.protocol.ProtocolCode;
 import com.yundepot.oaa.protocol.codec.ProtocolDecoder;
-import com.yundepot.oaa.serialize.SerializerManager;
-import com.yundepot.oaa.serialize.StringMapSerializer;
 import com.yundepot.oaa.util.CrcUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author zhaiyanan

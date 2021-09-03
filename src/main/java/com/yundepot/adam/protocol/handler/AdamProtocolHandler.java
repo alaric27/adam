@@ -1,9 +1,9 @@
-package com.yundepot.adam.protocol;
+package com.yundepot.adam.protocol.handler;
 
 import com.yundepot.adam.protocol.command.*;
 import com.yundepot.oaa.invoke.InvokeContext;
-import com.yundepot.oaa.protocol.AbstractProtocolHandler;
 import com.yundepot.oaa.protocol.command.CommandFactory;
+import com.yundepot.oaa.protocol.handler.AbstractProtocolHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

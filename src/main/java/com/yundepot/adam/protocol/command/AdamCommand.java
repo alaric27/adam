@@ -1,8 +1,6 @@
 package com.yundepot.adam.protocol.command;
 
 
-import com.yundepot.adam.processor.ProcessorManager;
-import com.yundepot.adam.protocol.AdamProtocol;
 import com.yundepot.oaa.exception.DeserializationException;
 import com.yundepot.oaa.exception.SerializationException;
 import com.yundepot.oaa.protocol.ProtocolCode;

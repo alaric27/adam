@@ -22,13 +22,17 @@ public class RequestCommand extends AdamCommand {
     }
 
     public RequestCommand(CommandCode code) {
-        super(code);
-        this.setId(IdGenerator.nextId());
+        this(code, null);
     }
 
     public RequestCommand(Object body) {
-        this();
-        this.setBody(body);
+        this(AdamCommandCode.REQUEST, body);
+    }
+
+    public RequestCommand(CommandCode code, Object body) {
+        super.setCommandCode(code);
+        super.setBody(body);
+        super.setId(IdGenerator.nextId());
     }
 
     public long getArriveTime() {

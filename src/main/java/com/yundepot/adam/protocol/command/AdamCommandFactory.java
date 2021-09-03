@@ -5,11 +5,10 @@ import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.ServerException;
 import com.yundepot.oaa.protocol.command.Command;
+import com.yundepot.oaa.protocol.command.CommandCode;
 import com.yundepot.oaa.protocol.command.CommandFactory;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author zhaiyanan
@@ -19,6 +18,11 @@ public class AdamCommandFactory implements CommandFactory {
     @Override
     public RequestCommand createRequest(Object requestObject) {
         return new RequestCommand(requestObject);
+    }
+
+    @Override
+    public RequestCommand createRequest(CommandCode commandCode, final Object request){
+        return new RequestCommand(commandCode, request);
     }
 
     @Override

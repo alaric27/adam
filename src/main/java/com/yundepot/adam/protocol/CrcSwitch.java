@@ -9,6 +9,7 @@ public enum CrcSwitch {
     ON((byte) 1),
     ;
 
+    // todo 该类不应该放在这里
     private byte code;
 
     CrcSwitch(byte code) {

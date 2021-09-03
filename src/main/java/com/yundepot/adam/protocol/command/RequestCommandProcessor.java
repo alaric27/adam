@@ -1,6 +1,5 @@
 package com.yundepot.adam.protocol.command;
 
-import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.processor.AdamAsyncContext;
 import com.yundepot.adam.processor.AsyncProcessor;
 import com.yundepot.adam.processor.Processor;
