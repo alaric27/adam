@@ -1,5 +1,6 @@
 package com.yundepot.adam;
 
+import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.protocol.command.AdamCommandCode;
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.oaa.BaseRemoting;
@@ -10,7 +11,9 @@ import com.yundepot.oaa.invoke.InvokeCallback;
 import com.yundepot.oaa.invoke.InvokeFuture;
 import com.yundepot.oaa.protocol.Protocol;
 import com.yundepot.oaa.protocol.command.Command;
+import com.yundepot.oaa.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +36,7 @@ public abstract class AdamRemoting extends BaseRemoting {
     public abstract void oneway(final Url url, final Object request, Map<String, String> header) throws Exception;
 
     public void oneway(final Connection conn, final Object request, Map<String, String> header) throws Exception{
-        RequestCommand requestCommand = toRemotingCommand(request, header, -1);
+        RequestCommand requestCommand = toRemotingCommand(request, header);
         requestCommand.setCommandCode(AdamCommandCode.ONE_WAY);
         super.oneway(conn, requestCommand);
     }
@@ -46,7 +49,7 @@ public abstract class AdamRemoting extends BaseRemoting {
     public abstract Command invokeSync(final Url url, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception;
 
     public Command invokeSync(final Connection conn, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception {
-        Command requestCommand = toRemotingCommand(request, header, timeoutMillis);
+        Command requestCommand = toRemotingCommand(request, header);
         return super.invokeSync(conn, requestCommand, timeoutMillis);
     }
 
@@ -58,7 +61,7 @@ public abstract class AdamRemoting extends BaseRemoting {
     public abstract InvokeFuture invokeWithFuture(final Url url, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception;
 
     public InvokeFuture invokeWithFuture(final Connection conn, final Object request, Map<String, String> header, final int timeoutMillis) {
-        Command requestCommand = toRemotingCommand(request, header, timeoutMillis);
+        Command requestCommand = toRemotingCommand(request, header);
         InvokeFuture future = super.invokeWithFuture(conn, requestCommand, timeoutMillis);
         return future;
     }
@@ -72,7 +75,7 @@ public abstract class AdamRemoting extends BaseRemoting {
                                             final int timeoutMillis) throws Exception;
 
     public void invokeWithCallback(final Connection conn, final Object request, Map<String, String> header, final InvokeCallback invokeCallback, final int timeoutMillis) {
-        Command requestCommand = toRemotingCommand(request, header, timeoutMillis);
+        Command requestCommand = toRemotingCommand(request, header);
         super.invokeWithCallback(conn, requestCommand, invokeCallback, timeoutMillis);
     }
 
@@ -80,15 +83,18 @@ public abstract class AdamRemoting extends BaseRemoting {
      * 构建请求对象
      * @param request
      * @param header
-     * @param timeoutMillis
      * @return
      */
-    protected RequestCommand toRemotingCommand(Object request, Map<String, String> header, int timeoutMillis) {
+    protected RequestCommand toRemotingCommand(Object request, Map<String, String> header) {
         RequestCommand command = this.getCommandFactory().createRequest(request);
         command.setProtocolCode(protocol.getProtocolCode());
-        command.setTimeout(timeoutMillis);
+        header = header == null ? new HashMap<>() : header;
+
+        String uri = header.get(HeaderOption.URI.getKey());
+        if (StringUtils.isEmpty(uri)) {
+            header.put(HeaderOption.URI.getKey(), request.getClass().getName());
+        }
         command.setHeader(header);
-        command.setUri(request.getClass().getName());
         return command;
     }
 

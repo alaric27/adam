@@ -1,9 +1,7 @@
 package com.yundepot.adam.config;
 
 import com.yundepot.adam.protocol.CrcSwitch;
-import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.config.ConfigOption;
-import com.yundepot.oaa.serialize.SerializerManager;
 
 /**
  * @author zhaiyanan
@@ -17,22 +15,12 @@ public class HeaderOption {
     public static final ConfigOption<String> CRC_SWITCH = ConfigOption.valueOf("crcSwitch", String.valueOf(CrcSwitch.OFF.getCode()));
 
     /**
-     * 序列化方式，默认为hessian
+     * 序列化提示
      */
-    public static final ConfigOption<String> SERIALIZATION = ConfigOption.valueOf("serialization", String.valueOf(SerializerManager.HESSIAN));
+    public static final ConfigOption<String> SERIALIZE_HINT = ConfigOption.valueOf("serializeHint", null);
 
     /**
-     * 请求超时时间，默认为-1
+     * 资源标识符
      */
-    public static final ConfigOption<String> REQUEST_TIMEOUT = ConfigOption.valueOf("timeout", String.valueOf(SerializerManager.HESSIAN));
-
-    /**
-     * 响应状态码， 默认成功
-     */
-    public static final ConfigOption<String> RESPONSE_STATUS = ConfigOption.valueOf("status", String.valueOf(ResponseStatus.SUCCESS.getValue()));
-
-    /**
-     * 感兴趣的事件
-     */
-    public static final ConfigOption<String> INTEREST = ConfigOption.valueOf("interest", null);
+    public static final ConfigOption<String> URI = ConfigOption.valueOf("uri", null);
 }

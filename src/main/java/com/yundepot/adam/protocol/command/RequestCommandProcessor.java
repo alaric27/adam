@@ -1,5 +1,6 @@
 package com.yundepot.adam.protocol.command;
 
+import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.processor.AdamAsyncContext;
 import com.yundepot.adam.processor.AsyncProcessor;
 import com.yundepot.adam.processor.Processor;
@@ -28,22 +29,16 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
 
     @Override
     public void doProcess(final InvokeContext ctx, RequestCommand cmd) {
-        Processor processor = ProcessorManager.getProcessor(cmd.getUri());
+        // todo 迁移该类
+        String uri = cmd.getHeader(HeaderOption.URI.getKey());
+        Processor processor = ProcessorManager.getProcessor(uri);
         if (processor == null) {
-            String errMsg = "No processor found for request: " + cmd.getUri();
+            String errMsg = "No processor found for request: " + uri;
             logger.error(errMsg);
             sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, null, errMsg));
             return;
         }
-
-        ctx.setTimeoutDiscard(processor.timeoutDiscard());
         ctx.setArriveTimestamp(cmd.getArriveTime());
-        ctx.setTimeout(cmd.getTimeout());
-        if (ctx.isTimeoutDiscard() && ctx.isRequestTimeout()) {
-            logger.debug("request id [{}] time out discard, cost [{}]", cmd.getId(), System.currentTimeMillis() - cmd.getArriveTime());
-            return;
-        }
-
         // 如果Processor设置了线程池则使用自己的线程池，如果没有设置，则在CommandProcessor的线程中执行
         Executor executor = processor.getExecutor();
         if (executor != null) {
@@ -88,7 +83,9 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
     private void dispatchToUserProcessor(InvokeContext ctx, RequestCommand cmd) {
         final int id = cmd.getId();
         ctx.setAttachment(cmd.getHeader());
-        Processor processor = ProcessorManager.getProcessor(cmd.getUri());
+        // todo
+        String uri = cmd.getHeader(HeaderOption.URI.getKey());
+        Processor processor = ProcessorManager.getProcessor(uri);
         if (processor instanceof AsyncProcessor) {
             // 在业务线程中处理，在业务线程中发送响应结果
             try {

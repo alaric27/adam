@@ -14,9 +14,4 @@ public abstract class AbstractProcessor<T> implements Processor<T> {
     public Executor getExecutor() {
         return null;
     }
-
-    @Override
-    public boolean timeoutDiscard() {
-        return true;
-    }
 }

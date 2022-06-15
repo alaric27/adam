@@ -1,6 +1,7 @@
 package com.yundepot.adam.protocol.command;
 
 
+import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.oaa.exception.DeserializationException;
 import com.yundepot.oaa.exception.SerializationException;
 import com.yundepot.oaa.protocol.ProtocolCode;
@@ -8,9 +9,7 @@ import com.yundepot.oaa.protocol.command.Command;
 import com.yundepot.oaa.protocol.command.CommandCode;
 import com.yundepot.oaa.serialize.SerializerManager;
 import com.yundepot.oaa.serialize.StringMapSerializer;
-import com.yundepot.oaa.util.StringUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,21 +41,6 @@ public class AdamCommand implements Command {
      * 序列化编码
      */
     private byte serializer = SerializerManager.HESSIAN;
-
-    /**
-     * 资源标识符长度
-     */
-    private short uriLen = 0;
-
-    /**
-     * 资源标识符
-     */
-    private String uri;
-
-    /**
-     * 资源标识字节
-     */
-    private byte[] uriBytes;
 
     /**
      * header长度
@@ -137,6 +121,9 @@ public class AdamCommand implements Command {
     }
 
     public void setHeader(String key, String value) {
+        if (header == null) {
+            header = new HashMap<>();
+        }
         this.header.put(key, value);
     }
 
@@ -145,6 +132,10 @@ public class AdamCommand implements Command {
             return value;
         }
         return this.header.getOrDefault(key, value);
+    }
+
+    public String getHeader(String key) {
+        return getHeader(key, null);
     }
 
     public int getBodyLen() {
@@ -166,7 +157,6 @@ public class AdamCommand implements Command {
 
     @Override
     public void serialize() throws SerializationException {
-        this.serializeUri();
         this.serializeHeader();
         this.serializeBody();
     }
@@ -183,23 +173,15 @@ public class AdamCommand implements Command {
         }
     }
 
-    private void serializeUri() {
-        if (StringUtils.isNotEmpty(this.uri)) {
-            setUriBytes(this.uri.getBytes(StandardCharsets.UTF_8));
-        }
-    }
-
-
     @Override
     public void deserialize() throws DeserializationException {
-        this.deserializeUri();
         this.deserializeHeader();
         this.deserializeBody();
     }
 
     private void deserializeBody() throws DeserializationException{
         if (this.bodyBytes != null) {
-            setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, getUri()));
+            setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, getHeader(HeaderOption.SERIALIZE_HINT.getKey())));
         }
     }
 
@@ -209,37 +191,8 @@ public class AdamCommand implements Command {
         }
     }
 
-    private void deserializeUri() {
-        if (this.uriBytes != null) {
-            this.setUri(new String(this.uriBytes, StandardCharsets.UTF_8));
-        }
-    }
-
     public void setSerializer(byte serializer) {
         this.serializer = serializer;
-    }
-
-    public short getUriLen() {
-        return uriLen;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public byte[] getUriBytes() {
-        return uriBytes;
-    }
-
-    public void setUriBytes(byte[] uriBytes) {
-        if (uriBytes != null) {
-            this.uriBytes = uriBytes;
-            this.uriLen = (short) uriBytes.length;
-        }
     }
 
     public byte[] getHeaderBytes() {

@@ -53,10 +53,7 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         AdamCommand command = null;
         if (cmdCode == AdamCommandCode.REQUEST.value() || cmdCode == AdamCommandCode.ONE_WAY.value()
                 || cmdCode == AdamCommandCode.HEARTBEAT_REQUEST.value()) {
-            int timeout = in.readInt();
             command = new RequestCommand();
-            RequestCommand cmd = (RequestCommand) command;
-            cmd.setTimeout(timeout);
         } else if (cmdCode == AdamCommandCode.RESPONSE.value() || cmdCode == AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
             short status = in.readShort();
             command = new ResponseCommand();
@@ -65,23 +62,16 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             cmd.setResponseStatus(ResponseStatus.valueOf(status));
         }
 
-        short uriLen = in.readShort();
         short headerLen = in.readShort();
         int bodyLen = in.readInt();
-        byte[] uriBytes = null;
         byte[] headerBytes = null;
         byte[] bodyBytes = null;
 
         // 校验数据是否足够
-        int lengthAtLeast = uriLen + headerLen + bodyLen;
+        int lengthAtLeast = headerLen + bodyLen;
         if (in.readableBytes() < lengthAtLeast) {
             in.resetReaderIndex();
             return;
-        }
-
-        if (uriLen > 0) {
-            uriBytes = new byte[uriLen];
-            in.readBytes(uriBytes);
         }
 
         if (headerLen > 0) {
@@ -97,7 +87,6 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
         command.setId(requestId);
         command.setSerializer(serializer);
-        command.setUriBytes(uriBytes);
         command.setHeaderBytes(headerBytes);
         command.setBodyBytes(bodyBytes);
         command.deserialize();

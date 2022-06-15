@@ -37,10 +37,4 @@ public interface Processor<T> {
      * @return
      */
     Executor getExecutor();
-
-    /**
-     * 是否超时丢弃
-     * @return
-     */
-    boolean timeoutDiscard();
 }

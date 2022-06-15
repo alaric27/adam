@@ -3,7 +3,6 @@ package com.yundepot.adam.protocol.codec;
 import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.adam.protocol.command.AdamCommand;
-import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
 import com.yundepot.oaa.protocol.codec.ProtocolEncoder;
 import com.yundepot.oaa.util.CrcUtil;
@@ -40,23 +39,13 @@ public class AdamProtocolEncoder implements ProtocolEncoder {
         out.writeShort(command.getCommandCode().value());
         out.writeInt(command.getId());
         out.writeByte(command.getSerializer());
-        if (command instanceof RequestCommand) {
-            RequestCommand requestCommand = (RequestCommand) command;
-            out.writeInt(requestCommand.getTimeout());
-        }
 
         if (command instanceof ResponseCommand) {
             ResponseCommand responseCommand = (ResponseCommand) command;
             out.writeShort(responseCommand.getResponseStatus().getValue());
         }
-        out.writeShort(command.getUriLen());
         out.writeShort(command.getHeaderLen());
         out.writeInt(command.getBodyLen());
-
-
-        if (command.getUriLen() > 0) {
-            out.writeBytes(command.getUriBytes());
-        }
 
         if (command.getHeaderLen() > 0) {
             out.writeBytes(command.getHeaderBytes());
