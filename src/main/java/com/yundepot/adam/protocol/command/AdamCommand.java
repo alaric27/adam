@@ -128,10 +128,6 @@ public class AdamCommand implements Command {
         return headerLen;
     }
 
-    public void setHeaderLen(short headerLen) {
-        this.headerLen = headerLen;
-    }
-
     public Map<String, String> getHeader() {
         return header;
     }
@@ -153,10 +149,6 @@ public class AdamCommand implements Command {
 
     public int getBodyLen() {
         return bodyLen;
-    }
-
-    public void setBodyLen(int bodyLen) {
-        this.bodyLen = bodyLen;
     }
 
     public Object getBody() {
@@ -229,10 +221,6 @@ public class AdamCommand implements Command {
 
     public short getUriLen() {
         return uriLen;
-    }
-
-    public void setUriLen(short uriLen) {
-        this.uriLen = uriLen;
     }
 
     public String getUri() {
