@@ -88,7 +88,7 @@ public abstract class AdamRemoting extends BaseRemoting {
         command.setProtocolCode(protocol.getProtocolCode());
         command.setTimeout(timeoutMillis);
         command.setHeader(header);
-        command.setNri(request.getClass().getName());
+        command.setUri(request.getClass().getName());
         return command;
     }
 

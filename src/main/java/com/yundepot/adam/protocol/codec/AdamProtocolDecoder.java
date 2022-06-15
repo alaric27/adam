@@ -65,23 +65,23 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             cmd.setResponseStatus(ResponseStatus.valueOf(status));
         }
 
-        short nriLen = in.readShort();
+        short uriLen = in.readShort();
         short headerLen = in.readShort();
         int bodyLen = in.readInt();
-        byte[] nriBytes = null;
+        byte[] uriBytes = null;
         byte[] headerBytes = null;
         byte[] bodyBytes = null;
 
         // 校验数据是否足够
-        int lengthAtLeast = nriLen + headerLen + bodyLen;
+        int lengthAtLeast = uriLen + headerLen + bodyLen;
         if (in.readableBytes() < lengthAtLeast) {
             in.resetReaderIndex();
             return;
         }
 
-        if (nriLen > 0) {
-            nriBytes = new byte[nriLen];
-            in.readBytes(nriBytes);
+        if (uriLen > 0) {
+            uriBytes = new byte[uriLen];
+            in.readBytes(uriBytes);
         }
 
         if (headerLen > 0) {
@@ -97,7 +97,7 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
         command.setId(requestId);
         command.setSerializer(serializer);
-        command.setNriBytes(nriBytes);
+        command.setUriBytes(uriBytes);
         command.setHeaderBytes(headerBytes);
         command.setBodyBytes(bodyBytes);
         command.deserialize();

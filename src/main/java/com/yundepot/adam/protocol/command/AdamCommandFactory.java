@@ -32,7 +32,7 @@ public class AdamCommandFactory implements CommandFactory {
         response.setProtocolCode(request.getProtocolCode());
         response.setResponseStatus(ResponseStatus.SUCCESS);
         response.setSerializer(requestCmd.getSerializer());
-        response.setNri(responseObject.getClass().getName());
+        response.setUri(responseObject.getClass().getName());
 
         byte crcSwitch = Byte.valueOf(requestCmd.getHeader(HeaderOption.CRC_SWITCH.getKey(), HeaderOption.CRC_SWITCH.getDefaultValue()));
         if (CrcSwitch.ON.getCode() == crcSwitch) {

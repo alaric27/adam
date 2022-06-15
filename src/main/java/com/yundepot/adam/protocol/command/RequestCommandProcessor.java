@@ -28,9 +28,9 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
 
     @Override
     public void doProcess(final InvokeContext ctx, RequestCommand cmd) {
-        Processor processor = ProcessorManager.getProcessor(cmd.getNri());
+        Processor processor = ProcessorManager.getProcessor(cmd.getUri());
         if (processor == null) {
-            String errMsg = "No processor found for request: " + cmd.getNri();
+            String errMsg = "No processor found for request: " + cmd.getUri();
             logger.error(errMsg);
             sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, null, errMsg));
             return;
@@ -88,7 +88,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
     private void dispatchToUserProcessor(InvokeContext ctx, RequestCommand cmd) {
         final int id = cmd.getId();
         ctx.setAttachment(cmd.getHeader());
-        Processor processor = ProcessorManager.getProcessor(cmd.getNri());
+        Processor processor = ProcessorManager.getProcessor(cmd.getUri());
         if (processor instanceof AsyncProcessor) {
             // 在业务线程中处理，在业务线程中发送响应结果
             try {

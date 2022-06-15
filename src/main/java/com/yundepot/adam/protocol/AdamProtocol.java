@@ -17,7 +17,7 @@ import com.yundepot.oaa.protocol.trigger.ProtocolHeartbeatTrigger;
  * 请求协议
  *   0     1     2           4                 8            9                        13         15            17                      21                          n               n+4
  *   +-----+-----+-----+-----------------------+------------+------------------------+-----------+-----+-----+---------------------------+------------------------+-----------------
- *   |proto| ver | command   |         id      | serializer |    timeout             |  nriLen   | headerLen |         bodyLen       |  nri header body bytes     | CRC32(optional) |
+ *   |proto| ver | command   |         id      | serializer |    timeout             |  uriLen   | headerLen |         bodyLen       |  uri header body bytes     | CRC32(optional) |
  *   +-----------------+---------------------------------------------------------------+-----------+-----+-----+-----+-----+--------------------------------------------------------
  *
  *
@@ -25,7 +25,7 @@ import com.yundepot.oaa.protocol.trigger.ProtocolHeartbeatTrigger;
  *
  *   0     1     2           4                  8            9          11           13          15                      19                         n                       n+4
  *   +-----+-----+-----+-----+------------------------------------------+------------+-----------+------------------------+---------------------------------------------------
- *   |proto| ver | command   |         id       | serializer |   status   | nriLen   | headerLen |        bodyLen         |  nri header body  bytes   | CRC32(optional)      |
+ *   |proto| ver | command   |         id       | serializer |   status   | uriLen   | headerLen |        bodyLen         |  uri header body  bytes   | CRC32(optional)      |
  *   +-----------------+---------------------------------------------------------------+-----+-----+-----+-----+-----+-----+--------------------------------------------------
  *
  *  proto: 协议编码
@@ -34,7 +34,7 @@ import com.yundepot.oaa.protocol.trigger.ProtocolHeartbeatTrigger;
  *  id: 请求id
  *  serializer: 序列化编码
  *  timeout: 超时时间
- *  nriLen: 资源定位符长度
+ *  uriLen: 资源标识符长度
  *  status: 响应码
  *  headerLen:header的长度
  *  bodyLen:内容的长度

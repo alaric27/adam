@@ -44,19 +44,19 @@ public class AdamCommand implements Command {
     private byte serializer = SerializerManager.HESSIAN;
 
     /**
-     * 资源定位符长度
+     * 资源标识符长度
      */
-    private short nriLen = 0;
+    private short uriLen = 0;
 
     /**
-     * 资源定位符
+     * 资源标识符
      */
-    private String nri;
+    private String uri;
 
     /**
-     * 资源定位字节
+     * 资源标识字节
      */
-    private byte[] nriBytes;
+    private byte[] uriBytes;
 
     /**
      * header长度
@@ -174,7 +174,7 @@ public class AdamCommand implements Command {
 
     @Override
     public void serialize() throws SerializationException {
-        this.serializeNri();
+        this.serializeUri();
         this.serializeHeader();
         this.serializeBody();
     }
@@ -191,23 +191,23 @@ public class AdamCommand implements Command {
         }
     }
 
-    private void serializeNri() {
-        if (StringUtils.isNotEmpty(this.nri)) {
-            setNriBytes(this.nri.getBytes(StandardCharsets.UTF_8));
+    private void serializeUri() {
+        if (StringUtils.isNotEmpty(this.uri)) {
+            setUriBytes(this.uri.getBytes(StandardCharsets.UTF_8));
         }
     }
 
 
     @Override
     public void deserialize() throws DeserializationException {
-        this.deserializeNri();
+        this.deserializeUri();
         this.deserializeHeader();
         this.deserializeBody();
     }
 
     private void deserializeBody() throws DeserializationException{
         if (this.bodyBytes != null) {
-            setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, getNri()));
+            setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, getUri()));
         }
     }
 
@@ -217,9 +217,9 @@ public class AdamCommand implements Command {
         }
     }
 
-    private void deserializeNri() {
-        if (this.nriBytes != null) {
-            this.setNri(new String(this.nriBytes, StandardCharsets.UTF_8));
+    private void deserializeUri() {
+        if (this.uriBytes != null) {
+            this.setUri(new String(this.uriBytes, StandardCharsets.UTF_8));
         }
     }
 
@@ -227,30 +227,30 @@ public class AdamCommand implements Command {
         this.serializer = serializer;
     }
 
-    public short getNriLen() {
-        return nriLen;
+    public short getUriLen() {
+        return uriLen;
     }
 
-    public void setNriLen(short nriLen) {
-        this.nriLen = nriLen;
+    public void setUriLen(short uriLen) {
+        this.uriLen = uriLen;
     }
 
-    public String getNri() {
-        return nri;
+    public String getUri() {
+        return uri;
     }
 
-    public void setNri(String nri) {
-        this.nri = nri;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
-    public byte[] getNriBytes() {
-        return nriBytes;
+    public byte[] getUriBytes() {
+        return uriBytes;
     }
 
-    public void setNriBytes(byte[] nriBytes) {
-        if (nriBytes != null) {
-            this.nriBytes = nriBytes;
-            this.nriLen = (short) nriBytes.length;
+    public void setUriBytes(byte[] uriBytes) {
+        if (uriBytes != null) {
+            this.uriBytes = uriBytes;
+            this.uriLen = (short) uriBytes.length;
         }
     }
 
