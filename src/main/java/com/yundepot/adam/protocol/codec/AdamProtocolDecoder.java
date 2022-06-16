@@ -39,8 +39,6 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         }
         // 检查协议
         checkProtocol(in);
-        // 检查 command code
-        checkCommandCode(in);
 
         int startIndex = in.readerIndex();
         in.markReaderIndex();
@@ -100,26 +98,6 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             checkCRC(in, startIndex);
         }
         out.add(command);
-    }
-
-    /**
-     * 检查command code
-     * @param in
-     */
-    private short checkCommandCode(ByteBuf in) throws CodecException{
-        in.markReaderIndex();
-        in.readByte();
-        in.readByte();
-        short cmdCode = in.readShort();
-        in.resetReaderIndex();
-        if (cmdCode != AdamCommandCode.REQUEST.value() && cmdCode != AdamCommandCode.ONE_WAY.value()
-                && cmdCode != AdamCommandCode.RESPONSE.value() && cmdCode != AdamCommandCode.HEARTBEAT_REQUEST.value()
-                && cmdCode != AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
-            String msg = "Unknown command code: " + cmdCode;
-            logger.error(msg);
-            throw new CodecException(msg);
-        }
-        return cmdCode;
     }
 
     /**

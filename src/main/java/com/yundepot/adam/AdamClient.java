@@ -44,8 +44,8 @@ public class AdamClient extends OaaClient {
         this.taskScanner.shutdown();
     }
 
-    public void oneway(final String addr, final Object request, Map<String, String> header) throws Exception{
-        this.adamRemoting.oneway(addr, request, header);
+    public void oneway(final String address, final Object request, Map<String, String> header) throws Exception{
+        this.adamRemoting.oneway(address, request, header);
     }
 
     public void oneway(final Url url, final Object request, Map<String, String> header) throws Exception{
@@ -56,8 +56,12 @@ public class AdamClient extends OaaClient {
         this.adamRemoting.oneway(conn, request, header);
     }
 
-    public Command invokeSync(final String addr, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception {
-        return this.adamRemoting.invokeSync(addr, request, header, timeoutMillis);
+    public Command invokeSync(final String address, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception {
+        return this.adamRemoting.invokeSync(address, request, header, timeoutMillis);
+    }
+
+    public Command invokeSync(final String address, final Object request, Map<String, String> header, final int timeout, short commandCode) throws Exception {
+        return this.adamRemoting.invokeSync(address, request, header, timeout, commandCode);
     }
 
     public Command invokeSync(final Url url, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception{
@@ -68,8 +72,8 @@ public class AdamClient extends OaaClient {
         return this.adamRemoting.invokeSync(conn, request, header, timeoutMillis);
     }
 
-    public InvokeFuture invokeWithFuture(final String addr, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception {
-        return this.adamRemoting.invokeWithFuture(addr, request, header, timeoutMillis);
+    public InvokeFuture invokeWithFuture(final String address, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception {
+        return this.adamRemoting.invokeWithFuture(address, request, header, timeoutMillis);
     }
 
     public InvokeFuture invokeWithFuture(final Url url, final Object request, Map<String, String> header, final int timeoutMillis) throws Exception {
@@ -80,9 +84,9 @@ public class AdamClient extends OaaClient {
         return this.adamRemoting.invokeWithFuture(conn, request, header, timeoutMillis);
     }
 
-    public void invokeWithCallback(final String addr, final Object request, Map<String, String> header, final InvokeCallback invokeCallback,
+    public void invokeWithCallback(final String address, final Object request, Map<String, String> header, final InvokeCallback invokeCallback,
                                    final int timeoutMillis) throws Exception {
-        this.adamRemoting.invokeWithCallback(addr, request, header, invokeCallback, timeoutMillis);
+        this.adamRemoting.invokeWithCallback(address, request, header, invokeCallback, timeoutMillis);
     }
 
     public void invokeWithCallback(final Url url, final Object request, Map<String, String> header, final InvokeCallback invokeCallback,
@@ -94,8 +98,8 @@ public class AdamClient extends OaaClient {
         this.adamRemoting.invokeWithCallback(conn, request, header, invokeCallback, timeoutMillis);
     }
 
-    public Connection getConnection(String addr, int connectTimeout) throws Exception {
-        Url url = Url.parse(addr);
+    public Connection getConnection(String address, int connectTimeout) throws Exception {
+        Url url = Url.parse(address);
         return this.getConnection(url, connectTimeout);
     }
 

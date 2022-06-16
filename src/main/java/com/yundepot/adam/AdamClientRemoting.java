@@ -39,6 +39,13 @@ public class AdamClientRemoting extends AdamRemoting {
     }
 
     @Override
+    public Command invokeSync(Url url, Object request, Map<String, String> header, int timeout, short commandCode) throws Exception{
+        final Connection conn = getConnectionAndInitInvokeContext(url);
+        this.connectionManager.check(conn);
+        return this.invokeSync(conn, request, header, timeout, commandCode);
+    }
+
+    @Override
     public InvokeFuture invokeWithFuture(Url url, Object request, Map<String, String> header, int timeoutMillis) throws Exception{
         final Connection conn = getConnectionAndInitInvokeContext(url);
         this.connectionManager.check(conn);
