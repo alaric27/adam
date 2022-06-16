@@ -3,6 +3,7 @@ package com.yundepot.adam.protocol.handler;
 import com.yundepot.adam.protocol.command.*;
 import com.yundepot.oaa.invoke.InvokeContext;
 import com.yundepot.oaa.protocol.command.CommandFactory;
+import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.protocol.handler.AbstractProtocolHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import org.slf4j.Logger;
@@ -29,8 +30,6 @@ public class AdamProtocolHandler extends AbstractProtocolHandler {
         registerCommandProcessor(AdamCommandCode.HEARTBEAT_REQUEST.value(), new HeartBeatRequestCommandProcessor());
         //注册心跳响应处理器
         registerCommandProcessor(AdamCommandCode.HEARTBEAT_RESPONSE.value(), new HeartBeatResponseCommandProcessor());
-        //注册one way处理器
-        registerCommandProcessor(AdamCommandCode.ONE_WAY.value(), new OneWayCommandProcessor());
     }
 
 
@@ -38,7 +37,7 @@ public class AdamProtocolHandler extends AbstractProtocolHandler {
     protected void processCommandException(InvokeContext ctx, Object msg, Throwable t) {
         if (msg instanceof RequestCommand) {
             final RequestCommand cmd = (RequestCommand) msg;
-            if (cmd.getCommandCode() != AdamCommandCode.ONE_WAY.value()) {
+            if (cmd.getCommandType() != CommandType.ONE_WAY.value()) {
                 final ResponseCommand response = this.commandFactory.createExceptionResponse(cmd, t, null);
                 ctx.getChannelHandlerContext().writeAndFlush(response).addListener(future -> {
                     if (!future.isSuccess()) {

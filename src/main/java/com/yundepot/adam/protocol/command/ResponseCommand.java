@@ -1,7 +1,7 @@
 package com.yundepot.adam.protocol.command;
 
 import com.yundepot.oaa.common.ResponseStatus;
-import com.yundepot.oaa.protocol.command.CommandCode;
+import com.yundepot.oaa.protocol.command.CommandType;
 
 import java.net.InetSocketAddress;
 
@@ -22,13 +22,8 @@ public class ResponseCommand extends AdamCommand {
     }
 
     public ResponseCommand(short commandCode) {
-        super(commandCode);
+        super(CommandType.RESPONSE.value(), commandCode);
         this.responseStatus = ResponseStatus.SUCCESS;
-    }
-
-    public ResponseCommand(short commandCode, int id) {
-        super(commandCode);
-        this.setId(id);
     }
 
     public ResponseCommand(int id, Object body) {

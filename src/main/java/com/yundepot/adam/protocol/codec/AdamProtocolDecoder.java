@@ -2,7 +2,6 @@ package com.yundepot.adam.protocol.codec;
 
 import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.protocol.command.AdamCommand;
-import com.yundepot.adam.protocol.command.AdamCommandCode;
 import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.adam.protocol.AdamProtocol;
 import com.yundepot.adam.protocol.command.RequestCommand;
@@ -11,6 +10,7 @@ import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.CodecException;
 import com.yundepot.oaa.protocol.ProtocolCode;
 import com.yundepot.oaa.protocol.codec.ProtocolDecoder;
+import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.util.CrcUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -44,20 +44,20 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         in.markReaderIndex();
         byte protocolCode = in.readByte();
         byte version = in.readByte();
+        byte commandType = in.readByte();
         short commandCode = in.readShort();
         int requestId = in.readInt();
         byte serializer = in.readByte();
 
         AdamCommand command = null;
-        if (commandCode == AdamCommandCode.REQUEST.value() || commandCode == AdamCommandCode.ONE_WAY.value()
-                || commandCode == AdamCommandCode.HEARTBEAT_REQUEST.value()) {
-            command = new RequestCommand();
-        } else if (commandCode == AdamCommandCode.RESPONSE.value() || commandCode == AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
+        if (commandType == CommandType.RESPONSE.value()) {
             short status = in.readShort();
             command = new ResponseCommand();
             ResponseCommand cmd = (ResponseCommand) command;
             cmd.setResponseHost((InetSocketAddress) ctx.channel().remoteAddress());
             cmd.setResponseStatus(ResponseStatus.valueOf(status));
+        } else {
+            command = new RequestCommand();
         }
 
         short headerLen = in.readShort();
@@ -82,6 +82,7 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         }
 
         command.setProtocolCode(ProtocolCode.getProtocolCode(protocolCode, version));
+        command.setCommandType(commandType);
         command.setCommandCode(commandCode);
         command.setId(requestId);
         command.setSerializer(serializer);

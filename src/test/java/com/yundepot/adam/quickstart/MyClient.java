@@ -21,7 +21,7 @@ public class MyClient {
         Map<String, String> header = new HashMap<>();
         header.put("a", "b");
         long start = System.currentTimeMillis();
-        ResponseCommand response = (ResponseCommand) client.invokeSync("127.0.0.1:8087",request, header, 3000 * 1000);
+        ResponseCommand response = (ResponseCommand) client.invokeSync("127.0.0.1:8087",request, header, 3000);
         System.out.println(System.currentTimeMillis() - start);
         MyResponse myResponse = (MyResponse) response.getBody();
         System.out.println(myResponse.getResp());

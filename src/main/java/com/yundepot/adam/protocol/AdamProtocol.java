@@ -15,21 +15,22 @@ import com.yundepot.oaa.protocol.trigger.ProtocolHeartbeatTrigger;
 /**
  *
  * 请求协议
- *   0     1     2           4                 8            9            11                     15                      n               n+4
- *   +-----+-----+-----+-----------------------+------------+------------+----------------------+----------------------+------------------+
- *   |proto| ver | command   |         id      | serializer | headerLen  |         bodyLen      |   header body bytes  | CRC32(optional) |
+ *   0     1     2     3            5                 9           10           12             16                      n               n+4
+ *   +-----+-----+-----+---------------------------------------------------------------------------------------------+------------------+
+ *   |proto| ver | type| command   |         id      | serializer | headerLen  |   bodyLen    |   header body bytes  | CRC32(optional) |
  *   +-----------------+---------------------------------------------------------------+-----------+-----+-----+-----+-----+--------------
  *
  *
  * 响应协议
  *
- *   0     1     2           4                  8            9          11           13                      17                           n           n+4
- *   +-----+-----+-----+-----+-----------------+------------------------+------------+-----------------------+---------------------------------------------------
- *   |proto| ver | command   |         id      | serializer |   status  | headerLen |        bodyLen         |      header body  bytes   | CRC32(optional)      |
+ *   0     1     2     3           5                 9            10         12           14                      18                           n           n+4
+ *   +-----+-----+------+-----------------------+------------------------+-----------------------------------+---------------------------------------------------
+ *   |proto| ver | type |command  |         id      | serializer |   status  | headerLen |        bodyLen         |      header body  bytes   | CRC32(optional)      |
  *   +-----------------+---------------------------------------------------------------+-----+-----+-----+-----+-----+-----+-------------------------------------
  *
  *  proto: 协议编码
  *  ver: 协议版本
+ *  type: 请求/响应/oneway
  *  command: Command的编码
  *  id: 请求id
  *  serializer: 序列化编码
@@ -47,8 +48,8 @@ public class AdamProtocol implements Protocol {
     public static final byte PROTOCOL_VERSION = (byte) 1;
 
 
-    private static final int REQUEST_HEADER_LEN = 15;
-    private static final int RESPONSE_HEADER_LEN = 17;
+    private static final int REQUEST_HEADER_LEN = 16;
+    private static final int RESPONSE_HEADER_LEN = 18;
 
     private ProtocolEncoder encoder;
     private ProtocolDecoder decoder;

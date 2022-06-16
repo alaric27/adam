@@ -12,7 +12,7 @@ public enum AdamCommandCode implements CommandCode {
     HEARTBEAT_RESPONSE((short)2),
     REQUEST((short) 3),
     RESPONSE((short) 4),
-    ONE_WAY((short) 5);
+    ;
 
     private short value;
 
@@ -35,8 +35,6 @@ public enum AdamCommandCode implements CommandCode {
                 return REQUEST;
             case 4:
                 return RESPONSE;
-            case 5:
-                return ONE_WAY;
                 default:
                     throw new IllegalArgumentException("Unknown command code value: " + value);
         }

@@ -11,7 +11,7 @@ import com.yundepot.oaa.invoke.InvokeCallback;
 import com.yundepot.oaa.invoke.InvokeFuture;
 import com.yundepot.oaa.protocol.Protocol;
 import com.yundepot.oaa.protocol.command.Command;
-import com.yundepot.oaa.protocol.command.CommandCode;
+import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.util.StringUtils;
 
 import java.util.HashMap;
@@ -37,7 +37,8 @@ public abstract class AdamRemoting extends BaseRemoting {
     public abstract void oneway(final Url url, final Object request, Map<String, String> header) throws Exception;
 
     public void oneway(final Connection conn, final Object request, Map<String, String> header) throws Exception{
-        RequestCommand requestCommand = createRequestCommand(request, header, AdamCommandCode.ONE_WAY.value());
+        RequestCommand requestCommand = createRequestCommand(request, header);
+        requestCommand.setCommandType(CommandType.ONE_WAY.value());
         super.oneway(conn, requestCommand);
     }
 

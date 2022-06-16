@@ -5,7 +5,6 @@ import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.ServerException;
 import com.yundepot.oaa.protocol.command.Command;
-import com.yundepot.oaa.protocol.command.CommandCode;
 import com.yundepot.oaa.protocol.command.CommandFactory;
 
 import java.net.InetSocketAddress;

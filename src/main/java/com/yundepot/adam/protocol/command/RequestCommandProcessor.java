@@ -9,6 +9,7 @@ import com.yundepot.oaa.invoke.InvokeContext;
 import com.yundepot.oaa.protocol.command.AbstractCommandProcessor;
 import com.yundepot.oaa.protocol.command.Command;
 import com.yundepot.oaa.protocol.command.CommandFactory;
+import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.util.RemotingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
 
     @Override
     public void doProcess(final InvokeContext ctx, RequestCommand cmd) {
+        ctx.setArriveTimestamp(cmd.getArriveTime());
+        ctx.setCommandType(cmd.getCommandType());
         String processorId = cmd.getHeader(HeaderOption.PROCESSOR.getKey());
         Processor processor = ProcessorManager.getProcessor(processorId);
         if (processor == null) {
@@ -37,7 +40,6 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
             sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, null, errMsg));
             return;
         }
-        ctx.setArriveTimestamp(cmd.getArriveTime());
         // 如果Processor设置了线程池则使用自己的线程池，如果没有设置，则在CommandProcessor的线程中执行
         Executor executor = processor.getExecutor();
         if (executor != null) {
@@ -59,6 +61,10 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
      * @param response
      */
     public void sendResponse(final InvokeContext ctx, final Command response) {
+        if (response.getCommandType() == CommandType.ONE_WAY.value()) {
+            return;
+        }
+
         final int id = response.getId();
         ctx.writeAndFlush(response).addListener(future -> {
             if (!future.isSuccess()) {

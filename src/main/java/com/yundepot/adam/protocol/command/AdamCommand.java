@@ -27,6 +27,11 @@ public class AdamCommand implements Command {
     private ProtocolCode protocolCode;
 
     /**
+     * 命令类型
+     */
+    private byte commandType;
+
+    /**
      * command 编码
      */
     private short commandCode;
@@ -79,6 +84,11 @@ public class AdamCommand implements Command {
         this.commandCode = commandCode;
     }
 
+    public AdamCommand(byte commandType, short commandCode) {
+        this.commandType = commandType;
+        this.commandCode = commandCode;
+    }
+
     @Override
     public ProtocolCode getProtocolCode() {
         return this.protocolCode;
@@ -86,6 +96,15 @@ public class AdamCommand implements Command {
 
     public void setProtocolCode(ProtocolCode protocolCode) {
         this.protocolCode = protocolCode;
+    }
+
+    @Override
+    public byte getCommandType() {
+        return commandType;
+    }
+
+    public void setCommandType(byte commandType) {
+        this.commandType = commandType;
     }
 
     @Override
