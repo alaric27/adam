@@ -18,16 +18,16 @@ public class ResponseCommand extends AdamCommand {
     private String errorMsg;
 
     public ResponseCommand() {
-        this(AdamCommandCode.RESPONSE);
+        this(AdamCommandCode.RESPONSE.value());
     }
 
-    public ResponseCommand(CommandCode code) {
-        super(code);
+    public ResponseCommand(short commandCode) {
+        super(commandCode);
         this.responseStatus = ResponseStatus.SUCCESS;
     }
 
-    public ResponseCommand(CommandCode code, int id) {
-        super(code);
+    public ResponseCommand(short commandCode, int id) {
+        super(commandCode);
         this.setId(id);
     }
 
@@ -37,8 +37,8 @@ public class ResponseCommand extends AdamCommand {
         this.setBody(body);
     }
 
-    public ResponseCommand(CommandCode code, int id, Object response) {
-        super(code);
+    public ResponseCommand(short commandCode, int id, Object response) {
+        super(commandCode);
         this.setId(id);
         this.setBody(response);
     }

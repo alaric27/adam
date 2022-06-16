@@ -22,15 +22,15 @@ public class AdamProtocolHandler extends AbstractProtocolHandler {
     public AdamProtocolHandler(CommandFactory commandFactory) {
         this.commandFactory = commandFactory;
         //注册请求处理器
-        registerCommandProcessor(AdamCommandCode.REQUEST, new RequestCommandProcessor(this.commandFactory));
+        registerCommandProcessor(AdamCommandCode.REQUEST.value(), new RequestCommandProcessor(this.commandFactory));
         //注册响应处理器
-        registerCommandProcessor(AdamCommandCode.RESPONSE, new ResponseCommandProcessor());
+        registerCommandProcessor(AdamCommandCode.RESPONSE.value(), new ResponseCommandProcessor());
         //注册心跳请求处理器
-        registerCommandProcessor(AdamCommandCode.HEARTBEAT_REQUEST, new HeartBeatRequestCommandProcessor());
+        registerCommandProcessor(AdamCommandCode.HEARTBEAT_REQUEST.value(), new HeartBeatRequestCommandProcessor());
         //注册心跳响应处理器
-        registerCommandProcessor(AdamCommandCode.HEARTBEAT_RESPONSE, new HeartBeatResponseCommandProcessor());
+        registerCommandProcessor(AdamCommandCode.HEARTBEAT_RESPONSE.value(), new HeartBeatResponseCommandProcessor());
         //注册one way处理器
-        registerCommandProcessor(AdamCommandCode.ONE_WAY, new OneWayCommandProcessor());
+        registerCommandProcessor(AdamCommandCode.ONE_WAY.value(), new OneWayCommandProcessor());
     }
 
 
@@ -38,7 +38,7 @@ public class AdamProtocolHandler extends AbstractProtocolHandler {
     protected void processCommandException(InvokeContext ctx, Object msg, Throwable t) {
         if (msg instanceof RequestCommand) {
             final RequestCommand cmd = (RequestCommand) msg;
-            if (cmd.getCommandCode().value() != AdamCommandCode.ONE_WAY.value()) {
+            if (cmd.getCommandCode() != AdamCommandCode.ONE_WAY.value()) {
                 final ResponseCommand response = this.commandFactory.createExceptionResponse(cmd, t, null);
                 ctx.getChannelHandlerContext().writeAndFlush(response).addListener(future -> {
                     if (!future.isSuccess()) {

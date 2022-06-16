@@ -36,7 +36,7 @@ public class AdamProtocolEncoder implements ProtocolEncoder {
         int index = out.writerIndex();
         out.writeByte(command.getProtocolCode().getCode());
         out.writeByte(command.getProtocolCode().getVersion());
-        out.writeShort(command.getCommandCode().value());
+        out.writeShort(command.getCommandCode());
         out.writeInt(command.getId());
         out.writeByte(command.getSerializer());
 

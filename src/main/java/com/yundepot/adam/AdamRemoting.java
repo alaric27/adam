@@ -37,7 +37,7 @@ public abstract class AdamRemoting extends BaseRemoting {
 
     public void oneway(final Connection conn, final Object request, Map<String, String> header) throws Exception{
         RequestCommand requestCommand = toRemotingCommand(request, header);
-        requestCommand.setCommandCode(AdamCommandCode.ONE_WAY);
+        requestCommand.setCommandCode(AdamCommandCode.ONE_WAY.value());
         super.oneway(conn, requestCommand);
     }
 

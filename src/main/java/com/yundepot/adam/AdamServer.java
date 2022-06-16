@@ -1,9 +1,8 @@
 package com.yundepot.adam;
 
-import com.yundepot.adam.processor.Processor;
-import com.yundepot.adam.processor.ProcessorManager;
 import com.yundepot.adam.protocol.AdamProtocol;
 import com.yundepot.oaa.OaaServer;
+import com.yundepot.oaa.protocol.Protocol;
 
 import java.net.InetSocketAddress;
 
@@ -12,6 +11,9 @@ import java.net.InetSocketAddress;
  * @date 2019/5/14 17:13
  */
 public class AdamServer extends OaaServer {
+
+
+    private Protocol protocol;
 
     /**
      * 构造方法，只绑定端口
@@ -28,15 +30,11 @@ public class AdamServer extends OaaServer {
      */
     public AdamServer(String ip, int port) {
         super(ip, port);
-        registerProtocol(new AdamProtocol());
+        protocol = new AdamProtocol();
+        registerProtocol(protocol);
     }
 
-    /**
-     * 注册处理器
-     * @param processor
-     */
-    public void registerProcessor(Processor<?> processor) {
-        ProcessorManager.registerProcessor(processor);
+    public Protocol getProtocol() {
+        return protocol;
     }
-
 }

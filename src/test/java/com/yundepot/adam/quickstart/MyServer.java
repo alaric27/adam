@@ -2,6 +2,8 @@ package com.yundepot.adam.quickstart;
 
 
 import com.yundepot.adam.AdamServer;
+import com.yundepot.adam.processor.Processor;
+import com.yundepot.adam.processor.ProcessorManager;
 
 /**
  * @author zhaiyanan
@@ -12,7 +14,7 @@ public class MyServer {
 
     public static void start() {
         AdamServer server = new AdamServer(8087);
-        server.registerProcessor(new MyServerProcessor());
+        ProcessorManager.registerProcessor(new MyServerProcessor());
         server.start();
     }
 

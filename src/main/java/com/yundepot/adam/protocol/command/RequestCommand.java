@@ -1,6 +1,5 @@
 package com.yundepot.adam.protocol.command;
 
-import com.yundepot.oaa.protocol.command.CommandCode;
 import com.yundepot.oaa.util.IdGenerator;
 
 /**
@@ -16,16 +15,16 @@ public class RequestCommand extends AdamCommand {
         this(AdamCommandCode.REQUEST);
     }
 
-    public RequestCommand(CommandCode code) {
-        this(code, null);
+    public RequestCommand(short commandCode) {
+        this(commandCode, null);
     }
 
     public RequestCommand(Object body) {
-        this(AdamCommandCode.REQUEST, body);
+        this(AdamCommandCode.REQUEST.value(), body);
     }
 
-    public RequestCommand(CommandCode code, Object body) {
-        super.setCommandCode(code);
+    public RequestCommand(short commandCode, Object body) {
+        super.setCommandCode(commandCode);
         super.setBody(body);
         super.setId(IdGenerator.nextId());
     }

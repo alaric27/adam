@@ -2,6 +2,8 @@ package com.yundepot.adam.string;
 
 
 import com.yundepot.adam.AdamServer;
+import com.yundepot.adam.processor.Processor;
+import com.yundepot.adam.processor.ProcessorManager;
 import com.yundepot.adam.quickstart.MyServerProcessor;
 
 /**
@@ -13,7 +15,7 @@ public class MyServer {
 
     public static void start() {
         AdamServer server = new AdamServer(8087);
-        server.registerProcessor(new MyStringProcessor());
+        ProcessorManager.registerProcessor(new MyStringProcessor());
         server.start();
     }
 

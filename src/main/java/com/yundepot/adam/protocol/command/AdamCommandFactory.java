@@ -21,7 +21,7 @@ public class AdamCommandFactory implements CommandFactory {
     }
 
     @Override
-    public RequestCommand createRequest(CommandCode commandCode, final Object request){
+    public RequestCommand createRequest(short commandCode, final Object request){
         return new RequestCommand(commandCode, request);
     }
 

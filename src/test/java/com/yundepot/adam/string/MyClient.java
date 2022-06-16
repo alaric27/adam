@@ -21,8 +21,7 @@ public class MyClient {
         client.start();
         Map<String, String> header = new HashMap<>();
         header.put("a", "b");
-        header.put(HeaderOption.SERIALIZATION.getKey(), "2");
-        header.put(HeaderOption.INTEREST.getKey(), "/rpc");
+        header.put(HeaderOption.PROCESSOR.getKey(), "/rpc");
         ResponseCommand response = (ResponseCommand) client.invokeSync("127.0.0.1:8087", "hello world", header, 30 * 1000);
         String myResponse = (String) response.getBody();
         System.out.println(myResponse);

@@ -6,7 +6,6 @@ import com.yundepot.oaa.exception.DeserializationException;
 import com.yundepot.oaa.exception.SerializationException;
 import com.yundepot.oaa.protocol.ProtocolCode;
 import com.yundepot.oaa.protocol.command.Command;
-import com.yundepot.oaa.protocol.command.CommandCode;
 import com.yundepot.oaa.serialize.SerializerManager;
 import com.yundepot.oaa.serialize.StringMapSerializer;
 
@@ -30,7 +29,7 @@ public class AdamCommand implements Command {
     /**
      * command 编码
      */
-    private CommandCode commandCode;
+    private short commandCode;
 
     /**
      * 请求id
@@ -76,7 +75,7 @@ public class AdamCommand implements Command {
 
     }
 
-    public AdamCommand(CommandCode commandCode) {
+    public AdamCommand(short commandCode) {
         this.commandCode = commandCode;
     }
 
@@ -90,11 +89,11 @@ public class AdamCommand implements Command {
     }
 
     @Override
-    public CommandCode getCommandCode() {
+    public short getCommandCode() {
         return commandCode;
     }
 
-    public void setCommandCode(CommandCode commandCode) {
+    public void setCommandCode(short commandCode) {
         this.commandCode = commandCode;
     }
 

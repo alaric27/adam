@@ -46,15 +46,15 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         in.markReaderIndex();
         byte protocolCode = in.readByte();
         byte version = in.readByte();
-        short cmdCode = in.readShort();
+        short commandCode = in.readShort();
         int requestId = in.readInt();
         byte serializer = in.readByte();
 
         AdamCommand command = null;
-        if (cmdCode == AdamCommandCode.REQUEST.value() || cmdCode == AdamCommandCode.ONE_WAY.value()
-                || cmdCode == AdamCommandCode.HEARTBEAT_REQUEST.value()) {
+        if (commandCode == AdamCommandCode.REQUEST.value() || commandCode == AdamCommandCode.ONE_WAY.value()
+                || commandCode == AdamCommandCode.HEARTBEAT_REQUEST.value()) {
             command = new RequestCommand();
-        } else if (cmdCode == AdamCommandCode.RESPONSE.value() || cmdCode == AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
+        } else if (commandCode == AdamCommandCode.RESPONSE.value() || commandCode == AdamCommandCode.HEARTBEAT_RESPONSE.value()) {
             short status = in.readShort();
             command = new ResponseCommand();
             ResponseCommand cmd = (ResponseCommand) command;
@@ -84,7 +84,7 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         }
 
         command.setProtocolCode(ProtocolCode.getProtocolCode(protocolCode, version));
-        command.setCommandCode(AdamCommandCode.valueOf(cmdCode));
+        command.setCommandCode(commandCode);
         command.setId(requestId);
         command.setSerializer(serializer);
         command.setHeaderBytes(headerBytes);
