@@ -2,7 +2,6 @@ package com.yundepot.adam.quickstart;
 
 
 import com.yundepot.adam.AdamServer;
-import com.yundepot.adam.processor.Processor;
 import com.yundepot.adam.processor.ProcessorManager;
 
 /**
