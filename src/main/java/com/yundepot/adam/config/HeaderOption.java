@@ -20,7 +20,7 @@ public class HeaderOption {
     public static final ConfigOption<String> SERIALIZE_HINT = ConfigOption.valueOf("serializeHint", null);
 
     /**
-     * 资源标识符
+     * 处理器
      */
-    public static final ConfigOption<String> URI = ConfigOption.valueOf("uri", null);
+    public static final ConfigOption<String> PROCESSOR = ConfigOption.valueOf("processor", null);
 }

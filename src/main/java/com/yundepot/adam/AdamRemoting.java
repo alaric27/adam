@@ -90,9 +90,9 @@ public abstract class AdamRemoting extends BaseRemoting {
         command.setProtocolCode(protocol.getProtocolCode());
         header = header == null ? new HashMap<>() : header;
 
-        String uri = header.get(HeaderOption.URI.getKey());
+        String uri = header.get(HeaderOption.PROCESSOR.getKey());
         if (StringUtils.isEmpty(uri)) {
-            header.put(HeaderOption.URI.getKey(), request.getClass().getName());
+            header.put(HeaderOption.PROCESSOR.getKey(), request.getClass().getName());
         }
         command.setHeader(header);
         return command;

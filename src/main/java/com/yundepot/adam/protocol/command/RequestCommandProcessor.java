@@ -29,11 +29,10 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
 
     @Override
     public void doProcess(final InvokeContext ctx, RequestCommand cmd) {
-        // todo 迁移该类
-        String uri = cmd.getHeader(HeaderOption.URI.getKey());
-        Processor processor = ProcessorManager.getProcessor(uri);
+        String processorId = cmd.getHeader(HeaderOption.PROCESSOR.getKey());
+        Processor processor = ProcessorManager.getProcessor(processorId);
         if (processor == null) {
-            String errMsg = "No processor found for request: " + uri;
+            String errMsg = "No processor found for request: " + processorId;
             logger.error(errMsg);
             sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, null, errMsg));
             return;
@@ -51,12 +50,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
     @Override
     protected void processException(InvokeContext ctx, RequestCommand command, Throwable e) {
         final ResponseCommand response = getCommandFactory().createExceptionResponse(command, e, null);
-        ctx.getChannelHandlerContext().writeAndFlush(response).addListener(future -> {
-            if (!future.isSuccess()) {
-                final int id = command.getId();
-                logger.error("Write back exception response failed, requestId={}", id, future.cause());
-            }
-        });
+        sendResponse(ctx, response);
     }
 
     /**
@@ -83,9 +77,8 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
     private void dispatchToUserProcessor(InvokeContext ctx, RequestCommand cmd) {
         final int id = cmd.getId();
         ctx.setAttachment(cmd.getHeader());
-        // todo
-        String uri = cmd.getHeader(HeaderOption.URI.getKey());
-        Processor processor = ProcessorManager.getProcessor(uri);
+        String processorId = cmd.getHeader(HeaderOption.PROCESSOR.getKey());
+        Processor processor = ProcessorManager.getProcessor(processorId);
         if (processor instanceof AsyncProcessor) {
             // 在业务线程中处理，在业务线程中发送响应结果
             try {
