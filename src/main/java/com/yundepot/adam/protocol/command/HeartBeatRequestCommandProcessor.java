@@ -20,6 +20,7 @@ public class HeartBeatRequestCommandProcessor extends AbstractCommandProcessor<R
         ResponseCommand ack = new ResponseCommand(AdamCommandCode.HEARTBEAT_RESPONSE.value());
         ack.setId(id);
         ack.setResponseStatus(ResponseStatus.SUCCESS);
+        ack.setProtocolCode(msg.getProtocolCode());
 
         ctx.writeAndFlush(ack).addListener(future -> {
             if (!future.isSuccess()) {

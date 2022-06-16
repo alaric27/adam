@@ -26,6 +26,10 @@ public class MyClient {
         MyResponse myResponse = (MyResponse) response.getBody();
         System.out.println(myResponse.getResp());
 //        Thread.sleep(100000);
+
+
+
+        Thread.sleep(1000 * 60 * 60);
     }
 
 }

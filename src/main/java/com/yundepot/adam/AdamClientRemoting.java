@@ -8,7 +8,6 @@ import com.yundepot.oaa.invoke.InvokeCallback;
 import com.yundepot.oaa.invoke.InvokeFuture;
 import com.yundepot.oaa.protocol.Protocol;
 import com.yundepot.oaa.protocol.command.Command;
-import com.yundepot.oaa.protocol.command.CommandFactory;
 
 import java.util.Map;
 
