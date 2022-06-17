@@ -80,15 +80,6 @@ public class AdamCommand implements Command {
 
     }
 
-    public AdamCommand(short commandCode) {
-        this.commandCode = commandCode;
-    }
-
-    public AdamCommand(byte commandType, short commandCode) {
-        this.commandType = commandType;
-        this.commandCode = commandCode;
-    }
-
     @Override
     public ProtocolCode getProtocolCode() {
         return this.protocolCode;

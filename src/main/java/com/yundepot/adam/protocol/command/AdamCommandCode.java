@@ -24,20 +24,4 @@ public enum AdamCommandCode implements CommandCode {
     public short value() {
         return this.value;
     }
-
-    public static AdamCommandCode valueOf(short value) {
-        switch (value) {
-            case 1:
-                return HEARTBEAT_REQUEST;
-            case 2:
-                return HEARTBEAT_RESPONSE;
-            case 3:
-                return REQUEST;
-            case 4:
-                return RESPONSE;
-                default:
-                    throw new IllegalArgumentException("Unknown command code value: " + value);
-        }
-    }
-
 }

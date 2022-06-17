@@ -12,35 +12,22 @@ import java.net.InetSocketAddress;
 public class ResponseCommand extends AdamCommand {
     private static final long serialVersionUID = -5194754228565292441L;
     private ResponseStatus responseStatus;
-    private long responseTimeMillis;
+
+    // 以下为客户端信息
+    private long responseTime;
     private InetSocketAddress responseHost;
     private Throwable cause;
     private String errorMsg;
 
     public ResponseCommand() {
-        this(AdamCommandCode.RESPONSE.value());
-    }
-
-    public ResponseCommand(short commandCode) {
-        super(CommandType.RESPONSE.value(), commandCode);
-        this.responseStatus = ResponseStatus.SUCCESS;
+        setCommandCode(AdamCommandCode.RESPONSE.value());
+        setCommandType(CommandType.RESPONSE.value());
     }
 
     public ResponseCommand(int id, Object body) {
         this();
-        this.setId(id);
-        this.setBody(body);
-    }
-
-    public ResponseCommand(short commandCode, int id, Object response) {
-        super(commandCode);
-        this.setId(id);
-        this.setBody(response);
-    }
-
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+        setId(id);
+        setBody(body);
     }
 
     public ResponseStatus getResponseStatus() {
@@ -51,12 +38,12 @@ public class ResponseCommand extends AdamCommand {
         this.responseStatus = responseStatus;
     }
 
-    public long getResponseTimeMillis() {
-        return responseTimeMillis;
+    public long getResponseTime() {
+        return responseTime;
     }
 
-    public void setResponseTimeMillis(long responseTimeMillis) {
-        this.responseTimeMillis = responseTimeMillis;
+    public void setResponseTime(long responseTime) {
+        this.responseTime = responseTime;
     }
 
     public InetSocketAddress getResponseHost() {

@@ -90,8 +90,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
     }
 
     private RequestCommand createRequestCommand(CommandFactory commandFactory) {
-        RequestCommand command = commandFactory.createRequest(null);
-        command.setCommandCode(AdamCommandCode.HEARTBEAT_REQUEST.value());
+        RequestCommand command = commandFactory.createRequest(AdamCommandCode.HEARTBEAT_REQUEST.value(), null);
         command.setProtocolCode(protocol.getProtocolCode());
         return command;
     }

@@ -13,25 +13,14 @@ public class RequestCommand extends AdamCommand {
     private transient long arriveTime = System.currentTimeMillis();
 
     public RequestCommand() {
-        this(AdamCommandCode.REQUEST);
-    }
-
-    public RequestCommand(byte commandType, short commandCode) {
-        this(commandType, commandCode, null);
-    }
-
-    public RequestCommand(short commandCode, Object body) {
-        this(CommandType.REQUEST.value(), commandCode, body);
+        setCommandCode(AdamCommandCode.REQUEST.value());
+        setCommandType(CommandType.REQUEST.value());
+        setId(IdGenerator.nextId());
     }
 
     public RequestCommand(Object body) {
-        this(CommandType.REQUEST.value(), AdamCommandCode.REQUEST.value(), body);
-    }
-
-    public RequestCommand(byte commandType, short commandCode, Object body) {
-        super.setCommandCode(commandCode);
-        super.setBody(body);
-        super.setId(IdGenerator.nextId());
+        this();
+        setBody(body);
     }
 
     public long getArriveTime() {

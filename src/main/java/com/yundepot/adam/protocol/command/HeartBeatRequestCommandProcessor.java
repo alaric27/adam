@@ -17,7 +17,8 @@ public class HeartBeatRequestCommandProcessor extends AbstractCommandProcessor<R
     @Override
     public void doProcess(InvokeContext ctx, RequestCommand msg) {
         final int id = msg.getId();
-        ResponseCommand ack = new ResponseCommand(AdamCommandCode.HEARTBEAT_RESPONSE.value());
+        ResponseCommand ack = new ResponseCommand();
+        ack.setCommandCode(AdamCommandCode.HEARTBEAT_RESPONSE.value());
         ack.setId(id);
         ack.setResponseStatus(ResponseStatus.SUCCESS);
         ack.setProtocolCode(msg.getProtocolCode());
