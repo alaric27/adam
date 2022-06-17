@@ -32,7 +32,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
      */
     public static final Integer maxRetry = GlobalConfigManager.getValue(GenericOption.TCP_HEARTBEAT_MAX_RETRY);
 
-    private static final long heartbeatTimeoutMillis = 3000;
+    private static final long heartbeatTimeout = 3000;
     private CommandFactory commandFactory;
     private Protocol protocol;
 
@@ -85,7 +85,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
                     invokeFuture.putResponse(response);
                     invokeFuture.tryAsyncExecuteInvokeCallbackAbnormally();
                 }
-            }, heartbeatTimeoutMillis, TimeUnit.MILLISECONDS);
+            }, heartbeatTimeout, TimeUnit.MILLISECONDS);
         }
     }
 
