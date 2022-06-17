@@ -6,17 +6,15 @@ import com.yundepot.oaa.protocol.command.CommandFactory;
 import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.protocol.handler.AbstractProtocolHandler;
 import io.netty.channel.ChannelHandler.Sharable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhaiyanan
  * @date 2019/5/14 17:13
  */
+@Slf4j
 @Sharable
 public class AdamProtocolHandler extends AbstractProtocolHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(AdamProtocolHandler.class);
 
     private CommandFactory commandFactory;
 
@@ -27,9 +25,7 @@ public class AdamProtocolHandler extends AbstractProtocolHandler {
         //注册响应处理器
         registerCommandProcessor(AdamCommandCode.RESPONSE.value(), new ResponseCommandProcessor());
         //注册心跳请求处理器
-        registerCommandProcessor(AdamCommandCode.HEARTBEAT_REQUEST.value(), new HeartBeatRequestCommandProcessor());
-        //注册心跳响应处理器
-        registerCommandProcessor(AdamCommandCode.HEARTBEAT_RESPONSE.value(), new HeartBeatResponseCommandProcessor());
+        registerCommandProcessor(AdamCommandCode.HEARTBEAT.value(), new HeartBeatCommandProcessor());
     }
 
 
@@ -39,10 +35,13 @@ public class AdamProtocolHandler extends AbstractProtocolHandler {
             final RequestCommand cmd = (RequestCommand) msg;
             if (cmd.getCommandType() != CommandType.ONE_WAY.value()) {
                 final ResponseCommand response = this.commandFactory.createExceptionResponse(cmd, t, null);
+                if (cmd.getCommandCode() == AdamCommandCode.HEARTBEAT.value()) {
+                    response.setCommandCode(AdamCommandCode.HEARTBEAT.value());
+                }
                 ctx.getChannelHandlerContext().writeAndFlush(response).addListener(future -> {
                     if (!future.isSuccess()) {
                         final int id = cmd.getId();
-                        logger.error("Write back exception response failed, requestId={}", id, future.cause());
+                        log.error("Write back exception response failed, requestId={}", id, future.cause());
                     }
                 });
             }

@@ -17,7 +17,7 @@ public class EchoCommandProcessor extends AbstractCommandProcessor<RequestComman
         MyRequest request = (MyRequest) msg.getBody();
         ResponseCommand response = new ResponseCommand(msg.getId(), request);
         response.setProtocolCode(msg.getProtocolCode());
-        response.setResponseStatus(ResponseStatus.SUCCESS);
+        response.setStatus(ResponseStatus.SUCCESS.value());
         response.setSerializer(msg.getSerializer());
         ctx.writeAndFlush(response).addListener(future -> {
             if (!future.isSuccess()) {

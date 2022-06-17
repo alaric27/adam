@@ -8,10 +8,9 @@ import com.yundepot.oaa.protocol.command.CommandCode;
  */
 public enum AdamCommandCode implements CommandCode {
 
-    HEARTBEAT_REQUEST((short)1),
-    HEARTBEAT_RESPONSE((short)2),
-    REQUEST((short) 3),
-    RESPONSE((short) 4),
+    HEARTBEAT((short)0),
+    REQUEST((short) 1),
+    RESPONSE((short) 2),
     ;
 
     private short value;

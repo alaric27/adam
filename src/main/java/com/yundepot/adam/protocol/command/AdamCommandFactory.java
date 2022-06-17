@@ -29,7 +29,7 @@ public class AdamCommandFactory implements CommandFactory {
         RequestCommand requestCmd = (RequestCommand) request;
         ResponseCommand response = new ResponseCommand(requestCmd.getId(), responseObject);
         response.setProtocolCode(request.getProtocolCode());
-        response.setResponseStatus(ResponseStatus.SUCCESS);
+        response.setStatus(ResponseStatus.SUCCESS.value());
         response.setSerializer(requestCmd.getSerializer());
         return response;
     }
@@ -41,7 +41,7 @@ public class AdamCommandFactory implements CommandFactory {
         ResponseCommand response = new ResponseCommand(request.getId(), exception );
         RequestCommand requestCmd = (RequestCommand) request;
         response.setProtocolCode(request.getProtocolCode());
-        response.setResponseStatus(ResponseStatus.SERVER_EXCEPTION);
+        response.setStatus(ResponseStatus.SERVER_EXCEPTION.value());
         response.setSerializer(requestCmd.getSerializer());
         return response;
     }
@@ -50,7 +50,7 @@ public class AdamCommandFactory implements CommandFactory {
     @Override
     public ResponseCommand createTimeoutResponse(InetSocketAddress address) {
         ResponseCommand responseCommand = new ResponseCommand();
-        responseCommand.setResponseStatus(ResponseStatus.TIMEOUT);
+        responseCommand.setStatus(ResponseStatus.TIMEOUT.value());
         responseCommand.setResponseTime(System.currentTimeMillis());
         responseCommand.setResponseHost(address);
         return responseCommand;
@@ -59,7 +59,7 @@ public class AdamCommandFactory implements CommandFactory {
     @Override
     public ResponseCommand createSendFailedResponse(final InetSocketAddress address, Throwable throwable) {
         ResponseCommand responseCommand = new ResponseCommand();
-        responseCommand.setResponseStatus(ResponseStatus.CLIENT_SEND_EXCEPTION);
+        responseCommand.setStatus(ResponseStatus.CLIENT_SEND_EXCEPTION.value());
         responseCommand.setResponseTime(System.currentTimeMillis());
         responseCommand.setResponseHost(address);
         responseCommand.setCause(throwable);
@@ -69,7 +69,7 @@ public class AdamCommandFactory implements CommandFactory {
     @Override
     public ResponseCommand createConnectionClosedResponse(InetSocketAddress address) {
         ResponseCommand responseCommand = new ResponseCommand();
-        responseCommand.setResponseStatus(ResponseStatus.CONNECTION_CLOSED);
+        responseCommand.setStatus(ResponseStatus.CONNECTION_CLOSED.value());
         responseCommand.setResponseTime(System.currentTimeMillis());
         responseCommand.setResponseHost(address);
         return responseCommand;

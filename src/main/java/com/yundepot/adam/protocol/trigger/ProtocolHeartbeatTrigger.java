@@ -60,7 +60,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
                     (response) -> {
                         ResponseCommand responseCommand = (ResponseCommand) response;
                         // 如果成功则重置尝试次数，否则失败次数加一
-                        if (responseCommand != null && responseCommand.getResponseStatus().getValue() == ResponseStatus.SUCCESS.getValue()) {
+                        if (responseCommand != null && responseCommand.getStatus() == ResponseStatus.SUCCESS.value()) {
                             ctx.channel().attr(Connection.HEARTBEAT_RETRY_COUNT).set(0);
                         } else {
                             Integer times = ctx.channel().attr(Connection.HEARTBEAT_RETRY_COUNT).get();
@@ -81,7 +81,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
                 InvokeFuture invokeFuture = conn.removeInvokeFuture(heartbeatId);
                 if (invokeFuture != null) {
                     ResponseCommand response = commandFactory.createTimeoutResponse(conn.getRemoteAddress());
-                    response.setCommandCode(AdamCommandCode.HEARTBEAT_RESPONSE.value());
+                    response.setCommandCode(AdamCommandCode.HEARTBEAT.value());
                     invokeFuture.putResponse(response);
                     invokeFuture.tryAsyncExecuteInvokeCallbackAbnormally();
                 }
@@ -90,7 +90,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
     }
 
     private RequestCommand createRequestCommand(CommandFactory commandFactory) {
-        RequestCommand command = commandFactory.createRequest(AdamCommandCode.HEARTBEAT_REQUEST.value(), null);
+        RequestCommand command = commandFactory.createRequest(AdamCommandCode.HEARTBEAT.value(), null);
         command.setProtocolCode(protocol.getProtocolCode());
         return command;
     }

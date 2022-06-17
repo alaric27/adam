@@ -6,7 +6,6 @@ import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.adam.protocol.AdamProtocol;
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
-import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.exception.CodecException;
 import com.yundepot.oaa.protocol.ProtocolCode;
 import com.yundepot.oaa.protocol.codec.ProtocolDecoder;
@@ -55,7 +54,7 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             command = new ResponseCommand();
             ResponseCommand cmd = (ResponseCommand) command;
             cmd.setResponseHost((InetSocketAddress) ctx.channel().remoteAddress());
-            cmd.setResponseStatus(ResponseStatus.valueOf(status));
+            cmd.setStatus(status);
         } else {
             command = new RequestCommand();
         }

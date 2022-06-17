@@ -43,7 +43,7 @@ public class AdamProtocolEncoder implements ProtocolEncoder {
 
         if (command instanceof ResponseCommand) {
             ResponseCommand responseCommand = (ResponseCommand) command;
-            out.writeShort(responseCommand.getResponseStatus().getValue());
+            out.writeShort(responseCommand.getStatus());
         }
         out.writeShort(command.getHeaderLen());
         out.writeInt(command.getBodyLen());

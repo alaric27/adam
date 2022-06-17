@@ -1,6 +1,5 @@
 package com.yundepot.adam.protocol.command;
 
-import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.protocol.command.CommandType;
 
 import java.net.InetSocketAddress;
@@ -11,7 +10,7 @@ import java.net.InetSocketAddress;
  */
 public class ResponseCommand extends AdamCommand {
     private static final long serialVersionUID = -5194754228565292441L;
-    private ResponseStatus responseStatus;
+    private short status;
 
     // 以下为客户端信息
     private long responseTime;
@@ -30,12 +29,12 @@ public class ResponseCommand extends AdamCommand {
         setBody(body);
     }
 
-    public ResponseStatus getResponseStatus() {
-        return responseStatus;
+    public short getStatus() {
+        return status;
     }
 
-    public void setResponseStatus(ResponseStatus responseStatus) {
-        this.responseStatus = responseStatus;
+    public void setStatus(short status) {
+        this.status = status;
     }
 
     public long getResponseTime() {
