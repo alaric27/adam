@@ -1,6 +1,6 @@
 package com.yundepot.adam.protocol.command;
 
-import com.yundepot.oaa.common.ResponseStatus;
+import com.yundepot.adam.common.ResponseStatus;
 import com.yundepot.oaa.connection.Connection;
 import com.yundepot.oaa.invoke.InvokeContext;
 import com.yundepot.oaa.invoke.InvokeFuture;

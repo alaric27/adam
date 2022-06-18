@@ -1,6 +1,6 @@
 package com.yundepot.adam.protocol.command;
 
-import com.yundepot.oaa.common.ResponseStatus;
+import com.yundepot.adam.common.ResponseStatus;
 import com.yundepot.oaa.exception.ServerException;
 import com.yundepot.oaa.protocol.command.Command;
 import com.yundepot.oaa.protocol.command.CommandFactory;

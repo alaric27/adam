@@ -1,9 +1,9 @@
 package com.yundepot.adam.customize;
 
+import com.yundepot.adam.common.ResponseStatus;
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
 import com.yundepot.adam.quickstart.MyRequest;
-import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.invoke.InvokeContext;
 import com.yundepot.oaa.protocol.command.AbstractCommandProcessor;
 

@@ -1,9 +1,9 @@
 package com.yundepot.adam.protocol.trigger;
 
+import com.yundepot.adam.common.ResponseStatus;
 import com.yundepot.adam.protocol.command.AdamCommandCode;
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
-import com.yundepot.oaa.common.ResponseStatus;
 import com.yundepot.oaa.common.TimerHolder;
 import com.yundepot.oaa.config.GenericOption;
 import com.yundepot.oaa.config.GlobalConfigManager;
