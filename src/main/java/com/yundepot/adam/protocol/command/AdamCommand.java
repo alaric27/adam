@@ -190,7 +190,7 @@ public class AdamCommand implements Command {
 
     private void deserializeBody() throws DeserializationException{
         if (this.bodyBytes != null) {
-            setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, getHeader(HeaderOption.SERIALIZE_HINT.getKey())));
+            setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, header));
         }
     }
 
