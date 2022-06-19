@@ -11,8 +11,7 @@ import com.yundepot.oaa.protocol.command.Command;
 import com.yundepot.oaa.protocol.command.CommandFactory;
 import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.util.RemotingUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Executor;
 
@@ -20,9 +19,8 @@ import java.util.concurrent.Executor;
  * @author zhaiyanan
  * @date 2019/5/10 16:10
  */
+@Slf4j
 public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCommand> {
-
-    private static final Logger logger = LoggerFactory.getLogger(RequestCommandProcessor.class);
 
     public RequestCommandProcessor(CommandFactory commandFactory) {
         super(commandFactory);
@@ -36,7 +34,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
         Processor processor = ProcessorManager.getProcessor(processorId);
         if (processor == null) {
             String errMsg = "No processor found for request: " + processorId;
-            logger.error(errMsg);
+            log.error(errMsg);
             sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, null, errMsg));
             return;
         }
@@ -68,7 +66,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
         final int id = response.getId();
         ctx.writeAndFlush(response).addListener(future -> {
             if (!future.isSuccess()) {
-                logger.error("response send failed,id={},address={}", id,
+                log.error("response send failed,id={},address={}", id,
                         RemotingUtil.parseRemoteAddress(ctx.getChannelHandlerContext().channel()), future.cause());
             }
         });
@@ -91,7 +89,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
                 processor.handleRequest(ctx, new AdamAsyncContext(ctx, cmd, this), cmd.getBody());
             } catch (Throwable t) {
                 String errMsg = "ASYNC process request failed in RequestCommandProcessor, id=" + id;
-                logger.error(errMsg, t);
+                log.error(errMsg, t);
                 sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, t, errMsg));
             }
         } else {
@@ -101,7 +99,7 @@ public class RequestCommandProcessor extends AbstractCommandProcessor<RequestCom
                 sendResponse(ctx, this.getCommandFactory().createResponse(cmd, responseObject));
             } catch (Throwable t) {
                 String errMsg = "SYNC process request failed in RequestCommandProcessor, id=" + id;
-                logger.error(errMsg, t);
+                log.error(errMsg, t);
                 sendResponse(ctx, this.getCommandFactory().createExceptionResponse(cmd, t, errMsg));
             }
         }

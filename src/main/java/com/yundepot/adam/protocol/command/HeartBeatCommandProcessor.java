@@ -8,15 +8,14 @@ import com.yundepot.oaa.protocol.command.AbstractCommandProcessor;
 import com.yundepot.oaa.protocol.command.Command;
 import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.util.RemotingUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhaiyanan
  * @date 2019/6/12 18:42
  */
+@Slf4j
 public class HeartBeatCommandProcessor extends AbstractCommandProcessor<Command> {
-    private static final Logger logger = LoggerFactory.getLogger(HeartBeatCommandProcessor.class);
 
     @Override
     public void doProcess(InvokeContext ctx, Command command) {
@@ -29,7 +28,7 @@ public class HeartBeatCommandProcessor extends AbstractCommandProcessor<Command>
             ack.setProtocolCode(command.getProtocolCode());
             ctx.writeAndFlush(ack).addListener(future -> {
                 if (!future.isSuccess()) {
-                    logger.error("Send heartbeat ack failed! Id={}, to remoteAddr={}", id,
+                    log.error("Send heartbeat ack failed! Id={}, to remoteAddr={}", id,
                             RemotingUtil.parseRemoteAddress(ctx.getChannelHandlerContext().channel()));
                 }
             });
@@ -44,7 +43,7 @@ public class HeartBeatCommandProcessor extends AbstractCommandProcessor<Command>
                 }
             } catch (Throwable e) {
                 String address = RemotingUtil.parseRemoteAddress(ctx.getChannelHandlerContext().channel());
-                logger.error("Exception caught when heartbeat invoke callback. address {}", address, e);
+                log.error("Exception caught when heartbeat invoke callback. address {}", address, e);
             }
         } else {
             throw new RuntimeException("Cannot process command: " + command.getClass().getName());

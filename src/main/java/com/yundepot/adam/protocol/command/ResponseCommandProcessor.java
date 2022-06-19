@@ -5,16 +5,14 @@ import com.yundepot.oaa.invoke.InvokeContext;
 import com.yundepot.oaa.invoke.InvokeFuture;
 import com.yundepot.oaa.protocol.command.AbstractCommandProcessor;
 import com.yundepot.oaa.protocol.command.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhaiyanan
  * @date 2019/6/27 09:13
  */
+@Slf4j
 public class ResponseCommandProcessor extends AbstractCommandProcessor<Command> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ResponseCommandProcessor.class);
 
     @Override
     public void doProcess(InvokeContext ctx, Command cmd) {
@@ -27,9 +25,8 @@ public class ResponseCommandProcessor extends AbstractCommandProcessor<Command> 
                 future.executeInvokeCallback();
             }
         } catch (Throwable e) {
-            logger.error("Exception when invoke callback, id={}", cmd.getId(), e);
+            log.error("Exception when invoke callback, id={}", cmd.getId(), e);
         }
-
     }
 
 }

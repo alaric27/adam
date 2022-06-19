@@ -15,17 +15,15 @@ import com.yundepot.oaa.protocol.command.CommandFactory;
 import com.yundepot.oaa.protocol.trigger.HeartbeatTrigger;
 import com.yundepot.oaa.util.RemotingUtil;
 import io.netty.channel.ChannelHandlerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author: zhaiyanan
  * @date: 2019/12/10 21:16
  */
+@Slf4j
 public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
-    private static final Logger logger = LoggerFactory.getLogger(ProtocolHeartbeatTrigger.class);
 
     /**
      * 心跳最大重试次数
@@ -53,7 +51,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
         // 如果心跳失败次数大于最大尝试次数，则关闭连接
         if (retryCount >= maxRetry) {
             conn.close();
-            logger.error("Heartbeat failed for {} times, close the connection from client side: {}", maxRetry, RemotingUtil.parseRemoteAddress(ctx.channel()));
+            log.error("Heartbeat failed for {} times, close the connection from client side: {}", maxRetry, RemotingUtil.parseRemoteAddress(ctx.channel()));
         } else {
             RequestCommand command = createRequestCommand(commandFactory);
             final InvokeFuture future = new DefaultInvokeFuture(command.getId(),
@@ -72,7 +70,7 @@ public class ProtocolHeartbeatTrigger implements HeartbeatTrigger {
             conn.addInvokeFuture(future);
             ctx.writeAndFlush(command).addListener(cf -> {
                 if (!cf.isSuccess()) {
-                    logger.error("Send heartbeat failed! Id={}, to remoteAddr={}", heartbeatId, RemotingUtil.parseRemoteAddress(ctx.channel()));
+                    log.error("Send heartbeat failed! Id={}, to remoteAddr={}", heartbeatId, RemotingUtil.parseRemoteAddress(ctx.channel()));
                 }
             });
 

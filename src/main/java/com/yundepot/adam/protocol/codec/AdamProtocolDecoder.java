@@ -1,9 +1,9 @@
 package com.yundepot.adam.protocol.codec;
 
 import com.yundepot.adam.config.HeaderOption;
-import com.yundepot.adam.protocol.command.AdamCommand;
-import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.adam.protocol.AdamProtocol;
+import com.yundepot.adam.protocol.CrcSwitch;
+import com.yundepot.adam.protocol.command.AdamCommand;
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
 import com.yundepot.oaa.exception.CodecException;
@@ -13,8 +13,7 @@ import com.yundepot.oaa.protocol.command.CommandType;
 import com.yundepot.oaa.util.CrcUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -23,9 +22,8 @@ import java.util.List;
  * @author zhaiyanan
  * @date 2019/6/9 14:26
  */
+@Slf4j
 public class AdamProtocolDecoder implements ProtocolDecoder {
-
-    private static final Logger logger = LoggerFactory.getLogger(AdamProtocolDecoder.class);
 
     private int lessLen = AdamProtocol.getResponseHeaderLength() < AdamProtocol.getRequestHeaderLength() ?
             AdamProtocol.getResponseHeaderLength() : AdamProtocol.getRequestHeaderLength();
@@ -110,7 +108,7 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         in.resetReaderIndex();
         if (protocol != AdamProtocol.PROTOCOL_CODE) {
             String msg = "Unknown protocol: " + protocol;
-            logger.error(msg);
+            log.error(msg);
             throw new CodecException(msg);
         }
     }
@@ -123,7 +121,7 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
         int actualCrc = CrcUtil.crc32(frame);
         if (expectedCrc != actualCrc) {
             String err = "CRC check failed!";
-            logger.error(err);
+            log.error(err);
             throw new CodecException(err);
         }
     }
