@@ -15,11 +15,6 @@ public class HeaderOption {
     public static final ConfigOption<String> CRC_SWITCH = ConfigOption.valueOf("crcSwitch", String.valueOf(CrcSwitch.OFF.getCode()));
 
     /**
-     * 序列化提示
-     */
-    public static final ConfigOption<String> SERIALIZE_HINT = ConfigOption.valueOf("serializeHint", null);
-
-    /**
      * 处理器
      */
     public static final ConfigOption<String> PROCESSOR = ConfigOption.valueOf("processor", null);

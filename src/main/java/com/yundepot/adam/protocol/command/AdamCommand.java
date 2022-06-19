@@ -1,7 +1,6 @@
 package com.yundepot.adam.protocol.command;
 
 
-import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.oaa.exception.DeserializationException;
 import com.yundepot.oaa.exception.SerializationException;
 import com.yundepot.oaa.protocol.ProtocolCode;
@@ -172,7 +171,7 @@ public class AdamCommand implements Command {
 
     private void serializeBody() throws SerializationException{
         if (this.body != null) {
-            setBodyBytes(SerializerManager.getSerializer(this.serializer).serialize(this.body));
+            setBodyBytes(SerializerManager.getSerializer(this.serializer).serialize(this.body, header));
         }
     }
 
