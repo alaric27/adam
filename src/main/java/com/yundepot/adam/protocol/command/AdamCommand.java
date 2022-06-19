@@ -188,9 +188,7 @@ public class AdamCommand implements Command {
     }
 
     private void deserializeBody() throws DeserializationException{
-        if (this.bodyBytes != null) {
-            setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, header));
-        }
+        setBody(SerializerManager.getSerializer(serializer).deserialize(bodyBytes, header));
     }
 
     private void deserializeHeader() {

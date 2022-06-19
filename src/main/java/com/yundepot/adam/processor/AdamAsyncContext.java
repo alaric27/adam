@@ -3,7 +3,10 @@ package com.yundepot.adam.processor;
 
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.RequestCommandProcessor;
+import com.yundepot.adam.protocol.command.ResponseCommand;
 import com.yundepot.oaa.invoke.InvokeContext;
+
+import java.util.Map;
 
 /**
  * @author zhaiyanan
@@ -22,7 +25,9 @@ public class AdamAsyncContext implements AsyncContext {
     }
 
     @Override
-    public void sendResponse(Object responseObject) {
-        processor.sendResponse(this.ctx, processor.getCommandFactory().createResponse(cmd, responseObject));
+    public void sendResponse(Object responseObject, Map<String, String> header) {
+        ResponseCommand response = processor.getCommandFactory().createResponse(cmd, responseObject);
+        response.setHeader(header);
+        processor.sendResponse(this.ctx, response);
     }
 }
