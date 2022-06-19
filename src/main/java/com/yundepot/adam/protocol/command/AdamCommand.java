@@ -165,8 +165,8 @@ public class AdamCommand implements Command {
 
     @Override
     public void serialize() throws SerializationException {
-        this.serializeHeader();
         this.serializeBody();
+        this.serializeHeader();
     }
 
     private void serializeBody() throws SerializationException{
