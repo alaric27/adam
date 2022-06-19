@@ -107,6 +107,11 @@ public abstract class AdamRemoting extends BaseRemoting {
         command.setProtocolCode(protocol.getProtocolCode());
         header = header == null ? new HashMap<>() : header;
 
+
+        if (header.containsKey(HeaderOption.SERIALIZER.getKey())) {
+            command.setSerializer(Byte.valueOf(header.remove(HeaderOption.SERIALIZER.getKey())));
+        }
+
         String processor = header.get(HeaderOption.PROCESSOR.getKey());
         if (StringUtils.isEmpty(processor)) {
             header.put(HeaderOption.PROCESSOR.getKey(), request.getClass().getName());

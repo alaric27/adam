@@ -2,6 +2,7 @@ package com.yundepot.adam.config;
 
 import com.yundepot.adam.protocol.CrcSwitch;
 import com.yundepot.oaa.config.ConfigOption;
+import com.yundepot.oaa.serialize.SerializerManager;
 
 /**
  * @author zhaiyanan
@@ -18,4 +19,10 @@ public class HeaderOption {
      * 处理器
      */
     public static final ConfigOption<String> PROCESSOR = ConfigOption.valueOf("processor", null);
+
+
+    /**
+     * 序列化选择，非传输参数
+     */
+    public static final ConfigOption<Byte> SERIALIZER = ConfigOption.valueOf("adam._serializer_", SerializerManager.HESSIAN);
 }
