@@ -1,6 +1,6 @@
 package com.yundepot.adam.config;
 
-import com.yundepot.adam.protocol.CrcSwitch;
+import com.yundepot.adam.common.CrcSwitch;
 import com.yundepot.oaa.config.ConfigOption;
 import com.yundepot.oaa.serialize.SerializerManager;
 

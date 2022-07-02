@@ -2,7 +2,7 @@ package com.yundepot.adam.protocol.codec;
 
 import com.yundepot.adam.config.HeaderOption;
 import com.yundepot.adam.protocol.AdamProtocol;
-import com.yundepot.adam.protocol.CrcSwitch;
+import com.yundepot.adam.common.CrcSwitch;
 import com.yundepot.adam.protocol.command.AdamCommand;
 import com.yundepot.adam.protocol.command.RequestCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
@@ -55,6 +55,12 @@ public class AdamProtocolDecoder implements ProtocolDecoder {
             cmd.setStatus(status);
         } else {
             command = new RequestCommand();
+        }
+
+        // 检查是否有足够的字节读取headerLen和bodyLen
+        if (in.readableBytes() < 6) {
+            in.resetReaderIndex();
+            return;
         }
 
         short headerLen = in.readShort();

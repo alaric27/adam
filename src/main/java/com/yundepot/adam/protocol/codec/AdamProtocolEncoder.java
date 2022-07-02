@@ -1,7 +1,7 @@
 package com.yundepot.adam.protocol.codec;
 
 import com.yundepot.adam.config.HeaderOption;
-import com.yundepot.adam.protocol.CrcSwitch;
+import com.yundepot.adam.common.CrcSwitch;
 import com.yundepot.adam.protocol.command.AdamCommand;
 import com.yundepot.adam.protocol.command.ResponseCommand;
 import com.yundepot.oaa.protocol.codec.ProtocolEncoder;
